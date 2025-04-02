@@ -3968,24 +3968,24 @@
       "checksum": "a5df977b575ebb67bfe6257725bae454"
     },
     ".Rprofile": {
-      "checksum": "7a1655162938c0683e1b84da843b63cc"
+      "checksum": "c5dceb9210cc1c101e57f3deb2151cfd"
     },
     "app.R": {
-      "checksum": "aee4a0eb9490f3d6977994a958b0e56b"
+      "checksum": "65b593e33b9f90d68636d4ff5cb80737"
     },
-    "old-R/app.R": {
+    "R/old-R/app.R": {
       "checksum": "d7de3d4286def258a70fbc8c61e9c6ec"
     },
-    "old-R/app2.R": {
+    "R/old-R/app2.R": {
       "checksum": "aa4eea4f839c7f2d9f118a34318597a2"
     },
-    "old-R/app3_v2.R": {
+    "R/old-R/app3_v2.R": {
       "checksum": "f08d5474be333afca16d78e6f8bdf28b"
     },
-    "old-R/app3.R": {
+    "R/old-R/app3.R": {
       "checksum": "caa2eee52da5257d88ac8ab1f5810868"
     },
-    "old-R/app4.R": {
+    "R/old-R/app4.R": {
       "checksum": "cb2191debaa9ca5c9cb3fa42ba8e29a7"
     },
     "renv.lock": {
