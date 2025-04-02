@@ -297,7 +297,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$finish_button, {
-    stopApp()
+    session$close()
   })
 }
 
