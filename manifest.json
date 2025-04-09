@@ -4071,10 +4071,10 @@
       "checksum": "a5df977b575ebb67bfe6257725bae454"
     },
     ".Rprofile": {
-      "checksum": "1228cc4c73e64af3e5688da9d3a55a26"
+      "checksum": "5a34ffd1e0a76fafc293698644f1a559"
     },
     "app.R": {
-      "checksum": "65b593e33b9f90d68636d4ff5cb80737"
+      "checksum": "ed0c926a311c4aed86f4af7215a5f031"
     },
     "R/old-R/app.R": {
       "checksum": "d7de3d4286def258a70fbc8c61e9c6ec"
@@ -4091,8 +4091,17 @@
     "R/old-R/app4.R": {
       "checksum": "cb2191debaa9ca5c9cb3fa42ba8e29a7"
     },
+    "R/old-R/app5.R": {
+      "checksum": "d77104dde9b882a1388544b79fbe0af3"
+    },
+    "R/old-R/app6.R": {
+      "checksum": "d7b5c55a491ab1a4c205255b429fb714"
+    },
     "renv.lock": {
       "checksum": "d3fddecd6e6bae52b669088dea0a5c06"
+    },
+    "www/reform-logo-charcoal.png": {
+      "checksum": "4ce474fe338ebe4c4e604df95dd821b1"
     }
   },
   "users": null
