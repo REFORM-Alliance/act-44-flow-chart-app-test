@@ -1587,6 +1587,42 @@
         "RemoteSha": "2.5.4"
       }
     },
+    "here": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "description": {
+        "Package": "here",
+        "Title": "A Simpler Way to Find Your Files",
+        "Version": "1.0.1",
+        "Date": "2020-12-13",
+        "Authors@R": "\n    c(person(given = \"Kirill\",\n             family = \"M\\u00fcller\",\n             role = c(\"aut\", \"cre\"),\n             email = \"krlmlr+r@mailbox.org\",\n             comment = c(ORCID = \"0000-0002-1416-3412\")),\n      person(given = \"Jennifer\",\n             family = \"Bryan\",\n             role = \"ctb\",\n             email = \"jenny@rstudio.com\",\n             comment = c(ORCID = \"0000-0002-6983-2759\")))",
+        "Description": "Constructs paths to your project's files.\n    Declare the relative path of a file within your project with 'i_am()'.\n    Use the 'here()' function as a drop-in replacement for 'file.path()',\n    it will always locate the files relative to your project root.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://here.r-lib.org/, https://github.com/r-lib/here",
+        "BugReports": "https://github.com/r-lib/here/issues",
+        "Imports": "rprojroot (>= 2.0.2)",
+        "Suggests": "conflicted, covr, fs, knitr, palmerpenguins, plyr, readr,\nrlang, rmarkdown, testthat, uuid, withr",
+        "VignetteBuilder": "knitr",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "7.1.1.9000",
+        "Config/testthat/edition": "3",
+        "NeedsCompilation": "no",
+        "Packaged": "2020-12-13 06:59:33 UTC; kirill",
+        "Author": "Kirill Müller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>),\n  Jennifer Bryan [ctb] (<https://orcid.org/0000-0002-6983-2759>)",
+        "Maintainer": "Kirill Müller <krlmlr+r@mailbox.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2020-12-13 07:30:02 UTC",
+        "Built": "R 4.4.0; ; 2024-04-05 15:17:29 UTC; unix",
+        "RemoteType": "standard",
+        "RemotePkgRef": "here",
+        "RemoteRef": "here",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "1.0.1"
+      }
+    },
     "highr": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.posit.co/cran/latest",
@@ -2984,6 +3020,40 @@
         "Built": "R 4.4.1; ; 2024-11-04 13:07:16 UTC; unix"
       }
     },
+    "rprojroot": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "description": {
+        "Package": "rprojroot",
+        "Title": "Finding Files in Project Subdirectories",
+        "Version": "2.0.4",
+        "Authors@R": "\n    person(given = \"Kirill\",\n           family = \"M\\u00fcller\",\n           role = c(\"aut\", \"cre\"),\n           email = \"kirill@cynkra.com\",\n           comment = c(ORCID = \"0000-0002-1416-3412\"))",
+        "Description": "Robust, reliable and flexible paths to files below\n    a project root. The 'root' of a project is defined as a directory that\n    matches a certain criterion, e.g., it contains a certain regular file.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://rprojroot.r-lib.org/, https://github.com/r-lib/rprojroot",
+        "BugReports": "https://github.com/r-lib/rprojroot/issues",
+        "Depends": "R (>= 3.0.0)",
+        "Suggests": "covr, knitr, lifecycle, mockr, rlang, rmarkdown, testthat (>=\n3.0.0), withr",
+        "VignetteBuilder": "knitr",
+        "Config/testthat/edition": "3",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.2.3",
+        "NeedsCompilation": "no",
+        "Packaged": "2023-11-05 06:47:23 UTC; kirill",
+        "Author": "Kirill Müller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>)",
+        "Maintainer": "Kirill Müller <kirill@cynkra.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2023-11-05 10:20:02 UTC",
+        "Built": "R 4.4.0; ; 2024-04-05 15:11:41 UTC; unix",
+        "RemoteType": "standard",
+        "RemotePkgRef": "rprojroot",
+        "RemoteRef": "rprojroot",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "2.0.4"
+      }
+    },
     "rsconnect": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.posit.co/cran/latest",
@@ -3227,6 +3297,40 @@
         "RemoteReposName": "CRAN",
         "RemotePkgPlatform": "aarch64-apple-darwin20",
         "RemoteSha": "1.10.0"
+      }
+    },
+    "shinyWidgets": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "description": {
+        "Package": "shinyWidgets",
+        "Title": "Custom Inputs Widgets for Shiny",
+        "Version": "0.9.0",
+        "Authors@R": "c(\n  person(\"Victor\", \"Perrier\", email = \"victor.perrier@dreamrs.fr\", role = c(\"aut\", \"cre\", \"cph\")),\n  person(\"Fanny\", \"Meyer\", role = \"aut\"),\n  person(\"David\", \"Granjon\", role = \"aut\"),\n  person(\"Ian\", \"Fellows\", role = \"ctb\", comment = \"Methods for mutating vertical tabs & updateMultiInput\"),\n  person(\"Wil\", \"Davis\", role = \"ctb\", comment = \"numericRangeInput function\"),\n  person(\"Spencer\", \"Matthews\", role = \"ctb\", comment = \"autoNumeric methods\"),\n  person(family = \"JavaScript and CSS libraries authors\", role = c(\"ctb\", \"cph\"), comment = \"All authors are listed in LICENSE.md\")\n  )",
+        "Description": "Collection of custom input controls and user interface components for 'Shiny' applications. \n  Give your applications a unique and colorful style !",
+        "URL": "https://github.com/dreamRs/shinyWidgets,\nhttps://dreamrs.github.io/shinyWidgets/",
+        "BugReports": "https://github.com/dreamRs/shinyWidgets/issues",
+        "License": "GPL-3",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.2",
+        "Depends": "R (>= 3.1.0)",
+        "Imports": "bslib, sass, shiny (>= 1.6.0), htmltools (>= 0.5.1), jsonlite,\ngrDevices, rlang",
+        "Suggests": "testthat, covr, ggplot2, DT, scales, shinydashboard,\nshinydashboardPlus",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-02-21 09:09:48 UTC; perri",
+        "Author": "Victor Perrier [aut, cre, cph],\n  Fanny Meyer [aut],\n  David Granjon [aut],\n  Ian Fellows [ctb] (Methods for mutating vertical tabs &\n    updateMultiInput),\n  Wil Davis [ctb] (numericRangeInput function),\n  Spencer Matthews [ctb] (autoNumeric methods),\n  JavaScript and CSS libraries authors [ctb, cph] (All authors are listed\n    in LICENSE.md)",
+        "Maintainer": "Victor Perrier <victor.perrier@dreamrs.fr>",
+        "Repository": "RSPM",
+        "Date/Publication": "2025-02-21 12:30:02 UTC",
+        "Built": "R 4.4.0; ; 2025-02-22 04:42:19 UTC; unix",
+        "RemoteType": "standard",
+        "RemotePkgRef": "shinyWidgets",
+        "RemoteRef": "shinyWidgets",
+        "RemoteRepos": "https://packagemanager.posit.co/cran/latest",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "0.9.0"
       }
     },
     "shinythemes": {
@@ -4071,7 +4175,7 @@
       "checksum": "a5df977b575ebb67bfe6257725bae454"
     },
     ".Rprofile": {
-      "checksum": "5a34ffd1e0a76fafc293698644f1a559"
+      "checksum": "dedd31cbd7d0014d785665025ec6a033"
     },
     "app.R": {
       "checksum": "ed0c926a311c4aed86f4af7215a5f031"
@@ -4098,7 +4202,7 @@
       "checksum": "d7b5c55a491ab1a4c205255b429fb714"
     },
     "renv.lock": {
-      "checksum": "d3fddecd6e6bae52b669088dea0a5c06"
+      "checksum": "141259977e91e52fb859ec5acb60995f"
     },
     "www/reform-logo-charcoal.png": {
       "checksum": "4ce474fe338ebe4c4e604df95dd821b1"
