@@ -1,13 +1,12 @@
 rm(list = ls())
 
-
 ####Read in Libraries####
 library(shiny)
 library(tidyverse)
 library(shinythemes)
 library(rsconnect)
 library(shinyWidgets)
-
+library(here)
 
 ####Write Decision Tree####
 decision_tree <- list(
@@ -21,13 +20,13 @@ decision_tree <- list(
     )
   ),
   list(
-    question = "Does the defendant's conviction include any of the following: 
+    question = "Does the defendant's conviction include any of the following:
     
-                1) Crime of Violence OR
-                2) Most homicide charges OR 
-                3) Most sex offender registration offenses OR 
-                4) Some domestic violence OR 
-                5) Some stalking charges", 
+              1) Crime of Violence OR
+              2) Most homicide charges OR 
+              3) Most sex offender registration offenses OR 
+              4) Some domestic violence OR 
+              5) Some stalking charges", 
     choices = c("Yes", "No"),
     question_id = "after_june_11_q1",
     next_question = list(
@@ -38,10 +37,10 @@ decision_tree <- list(
   list(
     question = "Did the Court determine any of the following:
     
-                1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
-                2) The defendant committed certain technical violations in 6 months prior to eligibility OR
-                3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
-                4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
+              1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
+              2) The defendant committed certain technical violations in 6 months prior to eligibility OR
+              3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
+              4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
     question_list = list("q1" = "Was the probation convicted of any felony or 1st or 2nd degree misdemeanor while on probation or in custody for the underlying offense?",
                          "q2" = "Was the probationer sentenced to probation for a crime related to sex offender registration?",
                          "q3" = "Was the probation sentence to probation for a crime of violence?",
@@ -56,16 +55,16 @@ decision_tree <- list(
   list(
     question = "Has the defendant completed any of the following: 
     
-                1) 50% of their aggregate sentence OR 
-                2) Two years on misdemeanor probation OR
-                3) Four years on felony probation or misdemeanor probation based on mulitple distinct misdemeanor convictions with consecutive sentences
-                
-                MINUS any of the following: 
-                
-                1) 12 months if the probation sentence was consecutive to state prison sentence and person did not violate parole in their last 12  or more months OR
-                2) 6 months for any educational achievement or other approved benchmark (can receive twice if on felony probation)
+              1) 50% of their aggregate sentence OR 
+              2) Two years on misdemeanor probation OR
+              3) Four years on felony probation or misdemeanor probation based on mulitple distinct misdemeanor convictions with consecutive sentences
+              
+              MINUS any of the following: 
+              
+              1) 12 months if the probation sentence was consecutive to state prison sentence and person did not violate parole in their last 12  or more months OR
+              2) 6 months for any educational achievement or other approved benchmark (can receive twice if on felony probation)
     
-                AND completed a year of probation?",
+              AND completed a year of probation?",
     choices = c("Yes", "No"),
     question_id = "after_june_11_q2",
     next_question = list(
@@ -78,32 +77,20 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "before_june_11_q2",
     next_question = list(
-      "Yes" = "after_june_11_q3",
+      "Yes" = "after_june_11_q3", 
       "No" = "no_act_44_relief_yet_result"
     )
   ),
-  # list(
-  #   question = "Is it June 11, 2025 or later, AND has the defendant completed at least 2 years on misdemeanor probation or 4 years on felony probation?",
-  #   question_list = list("q1" = "Did the conviction or convictions that led to probation include any felonies?",
-  #                        "q2" = "When was the probationer sentenced to probation? If there were multiple sentencing dates, use the date that was first in time"),
-  #   choices = list("q1" = c("Yes", "No"),
-  #                  "q2" = "Date"),
-  #   question_id = "after_june_11_q2",
-  #   next_question = list(
-  #     "Yes" = "after_june_11_q3",
-  #     "No" = "no_act_44_relief_yet_result"
-  #   )
-  # ),
   list(
     question = "At least 30 days prior to eligibility, probation office must serve a Probation Status Report on defendant, prosecutor, court, defense counsel, and registered victim. Must contain:
 
-                1) Eligibility date AND
-                2) Any technical violations within 6 months AND
-                3) Convictions while on probation or in custody on underlying case AND
-                4) Completion of programs AND
-                5) Restitution payments AND
-                6) A description of progress AND
-                7) Recommendation that probation be terminated, conditions modified, or continue under current conditions",
+              1) Eligibility date AND
+              2) Any technical violations within 6 months AND
+              3) Convictions while on probation or in custody on underlying case AND
+              4) Completion of programs AND
+              5) Restitution payments AND
+              6) A description of progress AND
+              7) Recommendation that probation be terminated, conditions modified, or continue under current conditions",
     question_id = "after_june_11_q3",
     next_question = "after_june_11_q4"
   ),
@@ -143,15 +130,15 @@ decision_tree <- list(
   list(
     question = "Did any of the following occur: 
     
-                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense 
-                2) Court finds clear and convincing evidence defendant committed technical offense in the 6 months prior to PRC with identifiable threat to public safety
-                3) Court finds preponderance of the evidence that in the 6 months prior to PRC defendant committed a technical offense in one of these categories:
-                    - “Sexual in nature”
-                    - “Assaultive behavior” or “credible threat to cause bodily injury to another”
-                    - Possession or control of firearm or dangerous weapon
-                    - Manufacture, sale, delivery, or possession with intent to sell drugs
-                    - Absconded
-                    - Unexcused and intentional failure to programming or conditions 3+ separate occasions",
+              1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense 
+              2) Court finds clear and convincing evidence defendant committed technical offense in the 6 months prior to PRC with identifiable threat to public safety
+              3) Court finds preponderance of the evidence that in the 6 months prior to PRC defendant committed a technical offense in one of these categories:
+                - “Sexual in nature”
+                - “Assaultive behavior” or “credible threat to cause bodily injury to another”
+                - Possession or control of firearm or dangerous weapon
+                - Manufacture, sale, delivery, or possession with intent to sell drugs
+                - Absconded
+                - Unexcused and intentional failure to programming or conditions 3+ separate occasions",
     choices = c("Yes", "No"),
     question_id = "after_june_11_q6",
     next_question = list(
@@ -172,9 +159,9 @@ decision_tree <- list(
   list(
     question = "Did a court find any of the following: 
     
-                1) Clear and convincing evidence of identifiable threat to public safety
-                2) Preponderance of evidence that has not completed program
-                3) Preponderance of evidence that has not paid restitution",
+              1) Clear and convincing evidence of identifiable threat to public safety
+              2) Preponderance of evidence that has not completed program
+              3) Preponderance of evidence that has not paid restitution",
     choices = c("Yes", "No"),
     question_id = "after_june_11_q7",
     next_question = list(
@@ -189,11 +176,11 @@ decision_tree <- list(
   list(
     question = "NOT eligible for MANDATORY early termination
     
-                BUT judge still has discretion to grant it, or change conditions
-                
-                AND court must provide reasons for denial in writing
-                
-                AND probationer is eligible for a PRC within 1 year of PRC date",
+              BUT judge still has discretion to grant it, or change conditions
+              
+              AND court must provide reasons for denial in writing
+              
+              AND probationer is eligible for a PRC within 1 year of PRC date",
     # choices = character(0),
     question_id = "after_june_11_q8",
     next_question = "after_june_11_q9"
@@ -201,9 +188,9 @@ decision_tree <- list(
   list(
     question = "Was early termination denied solely because of a failure to pay restitution
 
-                AND
-                
-                Did defendant pay at least 50% of restitution OR did they make a good faith effort to pay?",
+              AND
+              
+              Did defendant pay at least 50% of restitution OR did they make a good faith effort to pay?",
     choices = c("Yes", "No"),
     question_id = "after_june_11_q9",
     next_question = list(
@@ -237,6 +224,7 @@ decision_tree <- list(
 
 
 ####Create App####
+##UI
 ui <- fluidPage(
   theme = shinytheme("flatly"),  # Add a colorful theme
   tags$head(
@@ -245,14 +233,17 @@ ui <- fluidPage(
        .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
        .shiny-input-container { margin-bottom: 10px; }
        .btn-container { margin-top: 20px; }
-       .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
+       .logo-container { text-align: center; margin-bottom: 20px; }
        .logo { max-width: 200px; height: auto; }"
     ))
   ),
   
   # Add logo at the top
   div(class = "logo-container",
-      img(src = "reform-logo-charcoal.png", class = "logo")
+      img(src = 
+            "www" %>% 
+            here("reform-logo-charcoal.png"), 
+          class = "logo") # Replace "your_logo.png"
   ),
   
   titlePanel(strong("Act 44 Early Termination Tool")), # Make title bold
@@ -278,7 +269,7 @@ server <- function(input, output, session) {
           radioButtons("answer", NULL, choices = current_question$choices)
         }
       )
-    }else if("question" %in% names(current_question) & length(current_question$question_list) > 0){
+    } else if("question" %in% names(current_question) & length(current_question$question_list) > 0) {
       current_question %>% 
         pluck("question_list") %>% 
         enframe() %>% 
@@ -295,7 +286,7 @@ server <- function(input, output, session) {
             )
           )
         )
-    }else if("result" %in% names(current_question)) {
+    } else if("result" %in% names(current_question)) {
       div(class = "result-text", current_question$result)
     }
   })
@@ -310,12 +301,12 @@ server <- function(input, output, session) {
     }
     
     if("result" %in% names(current_question)) {
-      buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    } else{
+      buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-success"))) # Changed to success
+    } else {
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
     
-    do.call(fluidRow, buttons)
+    do.call(fluidRow, buttons) # Center buttons
   })
   
   observeEvent(input$answer, {
@@ -324,31 +315,17 @@ server <- function(input, output, session) {
     
     if(length(current_question$question_list) == 0){
       selected_answer(input$answer)
-    }else if(length(current_question$question_list) > 0){
+    } else if(length(current_question$question_list) > 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
       responses <- sapply(answer_ids, function(id) input[[id]])  
       if("Yes" %in% responses) {
         selected_answer("Yes")
-      }else{
+      } else {
         selected_answer("No")
       }
     }
   })
-  
-  # observeEvent(input$next_button, {
-  #   current_index <- tail(history(), 1)
-  #   current_question <- decision_tree[[current_index]]
-  #   
-  #   if("choices" %in% names(current_question)) {
-  #     next_id <- current_question$next_question[[selected_answer()]]
-  #   }else{
-  #     next_id <- current_question$next_question
-  #   }
-  #   
-  #   next_index <- which(map_chr(decision_tree, "question_id") == next_id)
-  #   history(c(history(), next_index))
-  # })
   
   observeEvent(input$next_button, {
     current_index <- tail(history(), 1)

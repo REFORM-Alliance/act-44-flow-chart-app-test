@@ -6,7 +6,6 @@ library(shiny)
 library(tidyverse)
 library(shinythemes)
 library(rsconnect)
-library(shinyWidgets)
 
 
 ####Write Decision Tree####
@@ -40,12 +39,7 @@ decision_tree <- list(
     
                 1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
                 2) The defendant committed certain technical violations in 6 months prior to eligibility OR
-                3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
-                4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
-    question_list = list("q1" = "Was the probation convicted of any felony or 1st or 2nd degree misdemeanor while on probation or in custody for the underlying offense?",
-                         "q2" = "Was the probationer sentenced to probation for a crime related to sex offender registration?",
-                         "q3" = "Was the probation sentence to probation for a crime of violence?",
-                         "q4" = "Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?"),
+                3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation",
     choices = c("Yes", "No"),
     question_id = "before_june_11_q1",
     next_question = list(
@@ -78,22 +72,10 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "before_june_11_q2",
     next_question = list(
-      "Yes" = "after_june_11_q3",
+      "Yes" = "after_june_11_q3", 
       "No" = "no_act_44_relief_yet_result"
     )
   ),
-  # list(
-  #   question = "Is it June 11, 2025 or later, AND has the defendant completed at least 2 years on misdemeanor probation or 4 years on felony probation?",
-  #   question_list = list("q1" = "Did the conviction or convictions that led to probation include any felonies?",
-  #                        "q2" = "When was the probationer sentenced to probation? If there were multiple sentencing dates, use the date that was first in time"),
-  #   choices = list("q1" = c("Yes", "No"),
-  #                  "q2" = "Date"),
-  #   question_id = "after_june_11_q2",
-  #   next_question = list(
-  #     "Yes" = "after_june_11_q3",
-  #     "No" = "no_act_44_relief_yet_result"
-  #   )
-  # ),
   list(
     question = "At least 30 days prior to eligibility, probation office must serve a Probation Status Report on defendant, prosecutor, court, defense counsel, and registered victim. Must contain:
 
@@ -237,29 +219,18 @@ decision_tree <- list(
 
 
 ####Create App####
+##UI
 ui <- fluidPage(
   theme = shinytheme("flatly"),  # Add a colorful theme
   tags$head(
-    tags$style(HTML(
-      ".question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-       .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
-       .shiny-input-container { margin-bottom: 10px; }
-       .btn-container { margin-top: 20px; }
-       .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
-       .logo { max-width: 200px; height: auto; }"
-    ))
+    tags$style(HTML(".question-text { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+                     .result-text { font-size: 22px; font-weight: bold; color: #007bff; }
+                     .shiny-input-container { margin-bottom: 15px; }"))
   ),
   
-  # Add logo at the top
-  div(class = "logo-container",
-      img(src = "reform-logo-charcoal.png", class = "logo")
-  ),
-  
-  titlePanel(strong("Act 44 Early Termination Tool")), # Make title bold
+  titlePanel("Decision Tree App"),
   uiOutput("quiz_ui"),
-  div(class = "btn-container",
-      uiOutput("button_ui")
-  )
+  uiOutput("button_ui")
 )
 
 ##Server
@@ -271,31 +242,14 @@ server <- function(input, output, session) {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
-    if("question" %in% names(current_question) & length(current_question$question_list) == 0) {
+    if ("question" %in% names(current_question)) {
       tagList(
         div(class = "question-text", current_question$question),
-        if("choices" %in% names(current_question) && length(current_question$choices) > 0) {
+        if ("choices" %in% names(current_question) && length(current_question$choices) > 0) {
           radioButtons("answer", NULL, choices = current_question$choices)
         }
       )
-    }else if("question" %in% names(current_question) & length(current_question$question_list) > 0){
-      current_question %>% 
-        pluck("question_list") %>% 
-        enframe() %>% 
-        mutate(value = 
-                 value %>% 
-                 unlist()) %>% 
-        pmap(
-          ~tagList(
-            div(class = "question-text", .y),  # The question text
-            radioButtons(
-              inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
-              label = NULL,  # Label the radio buttons if needed
-              choices = current_question$choices  # Choices for the radio buttons
-            )
-          )
-        )
-    }else if("result" %in% names(current_question)) {
+    } else if ("result" %in% names(current_question)) {
       div(class = "result-text", current_question$result)
     }
   })
@@ -305,13 +259,13 @@ server <- function(input, output, session) {
     current_question <- decision_tree[[current_index]]
     buttons <- list()
     
-    if(length(history()) > 1) {
+    if (length(history()) > 1) {
       buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
     }
     
-    if("result" %in% names(current_question)) {
+    if ("result" %in% names(current_question)) {
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    } else{
+    } else {
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
     
@@ -319,61 +273,25 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$answer, {
-    current_index <- tail(history(), 1)
-    current_question <- decision_tree[[current_index]]
-    
-    if(length(current_question$question_list) == 0){
-      selected_answer(input$answer)
-    }else if(length(current_question$question_list) > 0){
-      answer_ids <- names(input)[grepl("^answer_q", names(input))]
-      
-      responses <- sapply(answer_ids, function(id) input[[id]])  
-      if("Yes" %in% responses) {
-        selected_answer("Yes")
-      }else{
-        selected_answer("No")
-      }
-    }
+    selected_answer(input$answer)
   })
-  
-  # observeEvent(input$next_button, {
-  #   current_index <- tail(history(), 1)
-  #   current_question <- decision_tree[[current_index]]
-  #   
-  #   if("choices" %in% names(current_question)) {
-  #     next_id <- current_question$next_question[[selected_answer()]]
-  #   }else{
-  #     next_id <- current_question$next_question
-  #   }
-  #   
-  #   next_index <- which(map_chr(decision_tree, "question_id") == next_id)
-  #   history(c(history(), next_index))
-  # })
   
   observeEvent(input$next_button, {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
     if ("choices" %in% names(current_question)) {
-      if (length(current_question$question_list) == 0) {
-        next_id <- current_question$next_question[[selected_answer()]]
-      } else {
-        # Check if any of the multiple radio buttons have a "Yes" answer
-        answer_ids <- names(input)[grepl("^answer_q", names(input))]
-        responses <- sapply(answer_ids, function(id) input[[id]])
-        if (any(responses == "Yes")) {
-          next_id <- current_question$next_question[["Yes"]]
-        } else {
-          next_id <- current_question$next_question[["No"]]
-        }
-      }
-      next_index <- which(map_chr(decision_tree, "question_id") == next_id)
-      history(c(history(), next_index))
+      next_id <- current_question$next_question[[selected_answer()]]
+    } else {
+      next_id <- current_question$next_question
     }
+    
+    next_index <- which(map_chr(decision_tree, "question_id") == next_id)
+    history(c(history(), next_index))
   })
   
   observeEvent(input$back_button, {
-    if(length(history()) > 1) {
+    if (length(history()) > 1) {
       history(history()[1:(length(history()) - 1)])  # Remove last step
     }
   })
