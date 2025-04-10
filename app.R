@@ -143,7 +143,7 @@ decision_tree <- list(
   list(
     question = "Did any of the following occur: 
     
-                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense 
+                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense 
                 2) Court finds clear and convincing evidence defendant committed technical offense in the 6 months prior to PRC with identifiable threat to public safety
                 3) Court finds preponderance of the evidence that in the 6 months prior to PRC defendant committed a technical offense in one of these categories:
                     - “Sexual in nature”
@@ -355,21 +355,23 @@ server <- function(input, output, session) {
     current_question <- decision_tree[[current_index]]
     
     if ("choices" %in% names(current_question)) {
-      if (length(current_question$question_list) == 0) {
+      if(length(current_question$question_list) == 0) {
         next_id <- current_question$next_question[[selected_answer()]]
-      } else {
+      }else{
         # Check if any of the multiple radio buttons have a "Yes" answer
         answer_ids <- names(input)[grepl("^answer_q", names(input))]
         responses <- sapply(answer_ids, function(id) input[[id]])
-        if (any(responses == "Yes")) {
+        if(any(responses == "Yes")) {
           next_id <- current_question$next_question[["Yes"]]
-        } else {
+        }else{
           next_id <- current_question$next_question[["No"]]
         }
       }
-      next_index <- which(map_chr(decision_tree, "question_id") == next_id)
-      history(c(history(), next_index))
+    }else{
+      next_id <- current_question$next_question
     }
+    next_index <- which(map_chr(decision_tree, "question_id") == next_id)
+    history(c(history(), next_index))
   })
   
   observeEvent(input$back_button, {
