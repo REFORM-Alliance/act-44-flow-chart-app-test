@@ -13,22 +13,28 @@ library(shinyWidgets)
 decision_tree <- list(
   list(
     intro = TRUE,
-    question = tags$div(
+    content_above_buttons = tags$div(
       tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
       tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
                          "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>Pennsylvania's Act 44</a>, ",
-                         "which requires courts to assess people for early termination of probation or the modification of probation conditions.")
-      )),
-      tags$p("The tool is designed to help navigate what can be a complex law, but it is no substitute for legal advice and is designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44."),
-      tags$p(HTML(paste0("You can find the full text of the law ",
-                         "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>.")))
+                         "which requires courts to assess people for early termination of probation or the modification of probation conditions."))),
+      tags$p("This tool is designed to be used by anyone interested in Act 44, from judges and probation officers to people on probation and their loved ones. For ease of use, please indicate whether you are a professional who routinely works in this field looking for guidance in applying this law, or a person or probation or their loved one who is looking to see how Act 44 impacts you. The tool will produce the same results no matter who you are, we just want to make this easier for you to use and provide the most relevant information possible.")
     ),
+    content_below_buttons = tags$p(HTML(paste0("The tool is designed to help navigate what can be a complex law, but it is no substitute for legal advice and is designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
+                                              "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>."))),
     next_question = "defendant_sentencing_date",
     question_id = "intro_page"
   ),
   list(
-    question = "Was the defendant sentenced on or after June 11, 2024?",
+    question = 
+      tags$div(
+        tags$p(strong("First we need to ask when you or your loved one was sentenced. The type of relief that a person is eligible for under Act 44 changes dramatically depending on when they were sentenced.")),
+        tags$p(HTML(paste0("Do you know the date you or your loved one was sentenced? If you do not, you can look it up ", 
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+        tags$p("What date was you or your loved one sentenced?")
+      ),
     choices = c("Yes", "No"),
+    date_question = "Yes",
     question_id = "defendant_sentencing_date",
     next_question = list(
       "Yes" = "after_june_11_q1",
@@ -51,23 +57,55 @@ decision_tree <- list(
     )
   ),
   list(
-    question = "Did the Court determine any of the following:
-    
-                1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
-                2) The defendant committed certain technical violations in 6 months prior to eligibility OR
-                3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
-                4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
-    question_list = list("q1" = "Was the probation convicted of any felony or 1st or 2nd degree misdemeanor while on probation or in custody for the underlying offense?",
-                         "q2" = "Was the probationer sentenced to probation for a crime related to sex offender registration?",
-                         "q3" = "Was the probation sentence to probation for a crime of violence?",
-                         "q4" = "Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?"),
+    question = 
+      tags$div(
+        tags$p(HTML(paste0("Next we need to ask you some questions about the crime or crimes for which you or your loved one was sentenced. Do you know the crimes for which you or your loved one was convicted? If not, you can look them up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+        tags$p("Was the person sentenced to probation for one of the following types of crimes?")
+      ),
+    question_list = list("q1" = "A crime related to sex offender registration",
+                         "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank'>crime of violence</a>"),
+                         "q3" = "Assault or stalking against a family or household member? This only counts if they were convicted under under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking)"),
     choices = c("Yes", "No"),
     question_id = "before_june_11_q1",
-    next_question = list(
-      "Yes" = "no_act_44_relief_result",
-      "No" = "before_june_11_q2"
-    )
-  ), 
+    next_question = 
+      list(
+        "Yes" = "no_act_44_relief_result",
+        "No" = "before_june_11_q1_1"
+      )
+  ),
+  list(
+    question =
+      tags$div(
+        tags$p("Now we need to ask you about you or your loved one's behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you or your loved one had any arrests, convictions, or violations while on probation or while in custody on the case that led them to probation."),
+        tags$p("First of all, were you or a loved one convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
+      ),
+    choices = c("Yes", "No"), 
+    question_id = "before_june_11_q1_1",
+    next_question = 
+      list(
+        "Yes" = "no_act_44_relief_result",
+        "No" = "before_june_11_q2"
+      )
+  ),
+  # list(
+  #   question = "Did the Court determine any of the following:
+  #   
+  #               1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
+  #               2) The defendant committed certain technical violations in 6 months prior to eligibility OR
+  #               3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
+  #               4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
+  #   question_list = list("q1" = "Was the probation convicted of any felony or 1st or 2nd degree misdemeanor while on probation or in custody for the underlying offense?",
+  #                        "q2" = "Was the probationer sentenced to probation for a crime related to sex offender registration?",
+  #                        "q3" = "Was the probation sentence to probation for a crime of violence?",
+  #                        "q4" = "Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?"),
+  #   choices = c("Yes", "No"),
+  #   question_id = "before_june_11_q1",
+  #   next_question = list(
+  #     "Yes" = "no_act_44_relief_result",
+  #     "No" = "before_june_11_q2"
+  #   )
+  # ), 
   list(
     question = "Has the defendant completed any of the following: 
     
@@ -88,8 +126,19 @@ decision_tree <- list(
       "No" = "no_act_44_relief_yet_result"
     )
   ),
+  # list(
+  #   question = 
+  #     tags$div(
+  #       tags$p("Now we need to ask you about the probationer's behavior in the following dates: [insert the 6 month period prior to the person's eligibility date]")
+  #     )
+  # )
   list(
-    question = "Is it June 11, 2025 or later, AND has the defendant completed at least 2 years on misdemeanor probation or 4 years on felony probation?",
+    question = 
+      tags$div(
+        tags$p(strong("Now we need to ask you about the severity of the charge you or your loved one was convicted of. This is important because it will determine when you or your loved one are eligible for benefits under Act 44.")),
+        tags$p(HTML(paste0("Were any of these charges a felony? If you don't know the answer to this, you can look up it up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.")))
+      ),
     choices = c("Yes", "No"),
     question_id = "before_june_11_q2",
     next_question = list(
@@ -241,13 +290,23 @@ decision_tree <- list(
               AND probationer is eligible for a PRC within 1 year of PRC date",
     question_id = "early_termination_denied_result"
   ),
-  list(
-    result = "NO ACT 44 RELIEF YET",
-    question_id = "no_act_44_relief_yet_result"
+  list(result = 
+         tags$div(
+           tags$p(HTML(paste0("You or your loved one is entitled to apply for early termination or to have their conditions modified under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                              " A judge has discretion to grant or deny this application. Due to the nature of yours or your loved one's convictions they are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
+         ),
+       question_id = "no_act_44_relief_result"
   ),
-  list(
-    result = "NO ACT 44 RELIEF",
-    question_id = "no_act_44_relief_result"
+  list(result = 
+         tags$div(
+           tags$p(HTML(paste0("You or your loved one is entitled to apply for early termination or to have their conditions modified under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                              " A judge has discretion to grant or deny this application. Due to the nature of yours or your loved one's convictions they are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
+         ),
+       question_id = "no_act_44_relief_yet_result"
   )
 )
 
@@ -281,45 +340,65 @@ ui <- fluidPage(
 ##Server
 server <- function(input, output, session) {
   history <- reactiveVal(c(1))  # Track navigation history
+  sentencing_date <- reactiveVal(NULL)
   selected_answer <- reactiveVal(NULL)
   
   output$quiz_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
-    if("question" %in% names(current_question) & length(current_question$question_list) == 0) {
+    if(length(current_question$intro) > 0){
+      tagList(
+        current_question$content_above_buttons,
+        uiOutput("intro_buttons"), # Placeholder for buttons
+        current_question$content_below_buttons
+      )
+    }else if("question" %in% names(current_question) & length(current_question$question_list) == 0) {
       tagList(
         div(class = "question-text", current_question$question),
-        if("choices" %in% names(current_question) && length(current_question$choices) > 0) {
+        if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0) {
           radioButtons("answer", NULL, choices = current_question$choices)
+        }else if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) > 0){
+          dateInput(
+            inputId = "answer",
+            label = "Select a date:",
+            value = Sys.Date(),      
+            min = "1980-01-01",      
+            max = "2030-12-31",      
+            format = "yyyy-mm-dd",   
+            startview = "month",     
+            weekstart = 0,           
+            language = "en"          
+          )
         }
       )
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
-      current_question %>% 
-        pluck("question_list") %>% 
-        enframe() %>% 
-        mutate(value = 
-                 value %>% 
-                 unlist()) %>% 
-        pmap(
-          ~tagList(
-            div(class = "question-text", .y),  # The question text
-            radioButtons(
-              inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
-              label = NULL,  # Label the radio buttons if needed
-              choices = current_question$choices  # Choices for the radio buttons
+      tagList(
+        div(class = "question-text", current_question$question),
+        current_question %>% 
+          pluck("question_list") %>% 
+          enframe() %>% 
+          unnest(value) %>% 
+          pmap(
+            ~tagList(
+              div(class = "question-text", tags$div(tags$p(HTML(.y)))),  # The question text
+              radioButtons(
+                inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
+                label = NULL,  # Label the radio buttons if needed
+                choices = current_question$choices  # Choices for the radio buttons
+              )
             )
           )
         )
     }
-    # else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & 
+    # else if("question" %in% names(current_question) & length(current_question$question_list) > 0 &
     #          length(current_question$date_question) > 0 & current_question$date_question == "Yes"){
-    #   current_question %>% 
-    #     pluck("question_list") %>% 
-    #     enframe() %>% 
-    #     mutate(value = 
-    #              value %>% 
-    #              unlist()) %>% 
+    #   current_question %>%
+    #     pluck("question_list") %>%
+    #     enframe() %>%
+    #     mutate(value =
+    #              value %>%
+    #              unlist()) %>%
     #     pmap(
     #       ~tagList(
     #         div(class = "question-text", .y),  # The question text
@@ -350,6 +429,13 @@ server <- function(input, output, session) {
     }
   })
   
+  output$intro_buttons <- renderUI({
+    div(
+      actionButton("start_practitioner", "Practitioner", class = "btn btn-info"),
+      actionButton("start_person", "Person or Loved One on Probation", class = "btn btn-info", style = "margin-left: 10px;")
+    )
+  })
+  
   output$button_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
@@ -363,7 +449,8 @@ server <- function(input, output, session) {
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
     }else if(length(current_question$intro) > 0){
       buttons <- append(buttons, list(actionButton("start_button", "Start", class = "btn btn-success")))
-    }else{
+    }
+    else{
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
     
@@ -374,7 +461,12 @@ server <- function(input, output, session) {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
-    if(length(current_question$question_list) == 0){
+    if(length(current_question$question_list) == 0 & length(current_question$date_question) > 0){
+      if(current_question$question_id == "defendant_sentencing_date"){
+        sentencing_date(as.Date(input$answer))
+        ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
+      }
+    }else if(length(current_question$question_list) == 0){
       selected_answer(input$answer)
     }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
@@ -436,6 +528,12 @@ server <- function(input, output, session) {
         }else{
           next_id <- current_question$next_question[["No"]]
         }
+        # else{
+        #   if(Sys.Date() < as.Date("2025-06-11")){
+        #     next_id <- current_question$next_question[["No"]]
+        #   }else if(Sys.Date() >= as.Date("2025-06-11") & 
+        #            )
+        # }
       }
     }else{
       next_id <- current_question$next_question
