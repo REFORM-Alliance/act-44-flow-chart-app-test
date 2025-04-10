@@ -12,6 +12,21 @@ library(shinyWidgets)
 ####Write Decision Tree####
 decision_tree <- list(
   list(
+    intro = TRUE,
+    question = tags$div(
+      tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
+      tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
+                         "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>Pennsylvania's Act 44</a>, ",
+                         "which requires courts to assess people for early termination of probation or the modification of probation conditions.")
+      )),
+      tags$p("The tool is designed to help navigate what can be a complex law, but it is no substitute for legal advice and is designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44."),
+      tags$p(HTML(paste0("You can find the full text of the law ",
+                         "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>.")))
+    ),
+    next_question = "defendant_sentencing_date",
+    question_id = "intro_page"
+  ),
+  list(
     question = "Was the defendant sentenced on or after June 11, 2024?",
     choices = c("Yes", "No"),
     question_id = "defendant_sentencing_date",
@@ -78,7 +93,7 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "before_june_11_q2",
     next_question = list(
-      "Yes" = "after_june_11_q3",
+      "Yes" = "before_june_11_q2_mandate_result",
       "No" = "no_act_44_relief_yet_result"
     )
   ),
@@ -86,11 +101,12 @@ decision_tree <- list(
   #   question = "Is it June 11, 2025 or later, AND has the defendant completed at least 2 years on misdemeanor probation or 4 years on felony probation?",
   #   question_list = list("q1" = "Did the conviction or convictions that led to probation include any felonies?",
   #                        "q2" = "When was the probationer sentenced to probation? If there were multiple sentencing dates, use the date that was first in time"),
-  #   choices = list("q1" = c("Yes", "No"),
-  #                  "q2" = "Date"),
-  #   question_id = "after_june_11_q2",
+  #   choices = c("Yes", "No"),
+  #   date_question = "Yes",
+  #   date_question_n = "q2", 
+  #   question_id = "before_june_11_q2",
   #   next_question = list(
-  #     "Yes" = "after_june_11_q3",
+  #     "Yes" = "before_june_11_q2_mandate_result",
   #     "No" = "no_act_44_relief_yet_result"
   #   )
   # ),
@@ -278,7 +294,7 @@ server <- function(input, output, session) {
           radioButtons("answer", NULL, choices = current_question$choices)
         }
       )
-    }else if("question" %in% names(current_question) & length(current_question$question_list) > 0){
+    }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       current_question %>% 
         pluck("question_list") %>% 
         enframe() %>% 
@@ -295,7 +311,41 @@ server <- function(input, output, session) {
             )
           )
         )
-    }else if("result" %in% names(current_question)) {
+    }
+    # else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & 
+    #          length(current_question$date_question) > 0 & current_question$date_question == "Yes"){
+    #   current_question %>% 
+    #     pluck("question_list") %>% 
+    #     enframe() %>% 
+    #     mutate(value = 
+    #              value %>% 
+    #              unlist()) %>% 
+    #     pmap(
+    #       ~tagList(
+    #         div(class = "question-text", .y),  # The question text
+    #         if(.x %in% current_question$date_question_n){
+    #           dateInput(
+    #             inputId = paste0("answer_", .x),
+    #             label = "Select a date:",
+    #             value = Sys.Date(),      # Default selected date
+    #             min = "1980-01-01",      # Optional: min selectable date
+    #             max = "2030-12-31",      # Optional: max selectable date
+    #             format = "yyyy-mm-dd",   # Date format in the input box
+    #             startview = "month",     # Can be "month", "year", or "decade"
+    #             weekstart = 0,           # Day to start the week on (0 = Sunday)
+    #             language = "en"          # Language for the calendar
+    #           )
+    #         }else{
+    #           radioButtons(
+    #             inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
+    #             label = NULL,  # Label the radio buttons if needed
+    #             choices = current_question$choices  # Choices for the radio buttons
+    #           )
+    #         }
+    #       )
+    #     )
+    # }
+    else if("result" %in% names(current_question)) {
       div(class = "result-text", current_question$result)
     }
   })
@@ -311,7 +361,9 @@ server <- function(input, output, session) {
     
     if("result" %in% names(current_question)) {
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    } else{
+    }else if(length(current_question$intro) > 0){
+      buttons <- append(buttons, list(actionButton("start_button", "Start", class = "btn btn-success")))
+    }else{
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
     
@@ -324,7 +376,7 @@ server <- function(input, output, session) {
     
     if(length(current_question$question_list) == 0){
       selected_answer(input$answer)
-    }else if(length(current_question$question_list) > 0){
+    }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
       responses <- sapply(answer_ids, function(id) input[[id]])  
@@ -334,6 +386,24 @@ server <- function(input, output, session) {
         selected_answer("No")
       }
     }
+    # else if(question_id == "after_june_11_q2"){
+    #   if(input[["answer_q2"]] < as.Date("2025-06-11")){
+    #     date = as.Date("2025-06-11")
+    #   }else{
+    #     if(input[["answer_q1"]] == "Yes"){
+    #       date = as.Date(input[["answer_q2"]]) + month(4)
+    #     }else{
+    #       date = as.Date(input[["answer_q2"]] + month(2))
+    #     }
+    #   }
+    # }
+  })
+  
+  observeEvent(input$start_button, {
+    current_question <- decision_tree[[1]]
+    next_id <- current_question$next_question
+    next_index <- which(map_chr(decision_tree, "question_id") == next_id)
+    history(c(history(), next_index))
   })
   
   # observeEvent(input$next_button, {
@@ -354,7 +424,7 @@ server <- function(input, output, session) {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
-    if ("choices" %in% names(current_question)) {
+    if("choices" %in% names(current_question)) {
       if(length(current_question$question_list) == 0) {
         next_id <- current_question$next_question[[selected_answer()]]
       }else{
