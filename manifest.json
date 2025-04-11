@@ -4172,13 +4172,13 @@
   },
   "files": {
     ".RData": {
-      "checksum": "a5df977b575ebb67bfe6257725bae454"
+      "checksum": "735819e739bb540865096e71436abe3c"
     },
     ".Rprofile": {
-      "checksum": "dedd31cbd7d0014d785665025ec6a033"
+      "checksum": "bce0e4737b0d1135c0ab4f68b961d949"
     },
     "app.R": {
-      "checksum": "ed0c926a311c4aed86f4af7215a5f031"
+      "checksum": "822a9dfcf67465e1b7528517b666b9b8"
     },
     "R/old-R/app.R": {
       "checksum": "d7de3d4286def258a70fbc8c61e9c6ec"
@@ -4201,8 +4201,14 @@
     "R/old-R/app6.R": {
       "checksum": "d7b5c55a491ab1a4c205255b429fb714"
     },
+    "R/old-R/app7.R": {
+      "checksum": "9b9699d7c2cb5f875b6f33cbd4ca33d0"
+    },
     "renv.lock": {
       "checksum": "141259977e91e52fb859ec5acb60995f"
+    },
+    "www/act-44-early-termination-flow-chart.png": {
+      "checksum": "2c5fb2fb3f637be59ff212c949b0c722"
     },
     "www/reform-logo-charcoal.png": {
       "checksum": "4ce474fe338ebe4c4e604df95dd821b1"

@@ -7,59 +7,21 @@ library(tidyverse)
 library(shinythemes)
 library(rsconnect)
 library(shinyWidgets)
-library(lubridate)
-library(scales)
 
-
-####Helper Functions####
-##Pretty Dates
-format_pretty_date <- function(date, use_suffix = TRUE) {
-  # Ensure it's a Date object
-  date <- as.Date(date)
-  
-  day_num <- lubridate::day(date)
-  day_str <- if (use_suffix) {
-    scales::ordinal(day_num)
-  } else {
-    as.character(day_num)
-  }
-  
-  formatted <- paste0(
-    format(date, "%B "),  # Month full name
-    day_str,
-    ", ",
-    format(date, "%Y")    # Year
-  )
-  
-  return(formatted)
-}
 
 ####Write Decision Tree####
 decision_tree <- list(
   list(
     intro = TRUE,
-    content_above_buttons = 
-      tags$div(
-        tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
-        tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>Pennsylvania's Act 44</a>, ",
-                           "which requires courts to assess people for early termination of probation or the modification of probation conditions."))),
-        tags$p("This tool is designed to be used by anyone interested in Act 44, from judges and probation officers to people on probation and their loved ones. For ease of use, please indicate whether you are a professional who routinely works in this field looking for guidance in applying this law, or a person or probation or their loved one who is looking to see how Act 44 impacts you. The tool will produce the same results no matter who you are, we just want to make this easier for you to use and provide the most relevant information possible.")
-      ),
-    content_below_buttons = 
-      tags$div(
-        tags$p("Please note that this tool is specifically designed to be used by people on their probation or others who do not professionally work in this system. For those who work professionally in this field, we recommend using the flow chart available below that walks through every step in the Act 44 process regarding early termination and modification of probation conditions."),
-        tags$a(
-          href = "act-44-early-termination-flow-chart.png",
-          target = "_blank",
-          tags$img(
-            src = "act-44-early-termination-flow-chart.png",
-            style = "width: 100%; max-width: 1200px; display: block; margin: 20px auto;"
-          )
-        ),
-        tags$p(HTML(paste0("The tool and flowchart are designed to help navigate Act 44, but they are no substitute for legal advice and are designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>.")))
-      ),
+    content_above_buttons = tags$div(
+      tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
+      tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
+                         "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>Pennsylvania's Act 44</a>, ",
+                         "which requires courts to assess people for early termination of probation or the modification of probation conditions."))),
+      tags$p("This tool is designed to be used by anyone interested in Act 44, from judges and probation officers to people on probation and their loved ones. For ease of use, please indicate whether you are a professional who routinely works in this field looking for guidance in applying this law, or a person or probation or their loved one who is looking to see how Act 44 impacts you. The tool will produce the same results no matter who you are, we just want to make this easier for you to use and provide the most relevant information possible.")
+    ),
+    content_below_buttons = tags$p(HTML(paste0("The tool is designed to help navigate what can be a complex law, but it is no substitute for legal advice and is designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
+                                              "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>."))),
     next_question = "defendant_sentencing_date",
     question_id = "intro_page"
   ),
@@ -90,7 +52,7 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "after_june_11_q1",
     next_question = list(
-      "Yes" = "no_act_44_relief_result",
+      "Yes" = "no_act_44_relief_yet_result",
       "No" = "after_june_11_q2"
     )
   ),
@@ -126,6 +88,24 @@ decision_tree <- list(
         "No" = "before_june_11_q2"
       )
   ),
+  # list(
+  #   question = "Did the Court determine any of the following:
+  #   
+  #               1) The underlying offense was a crime of violence, most sex offender registration offenses, some domestic violence or some stalking charges OR
+  #               2) The defendant committed certain technical violations in 6 months prior to eligibility OR
+  #               3) The defendant was convicted of any felony or 1st or 2nd degree misdemeanor while on probation OR
+  #               4) Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?",
+  #   question_list = list("q1" = "Was the probation convicted of any felony or 1st or 2nd degree misdemeanor while on probation or in custody for the underlying offense?",
+  #                        "q2" = "Was the probationer sentenced to probation for a crime related to sex offender registration?",
+  #                        "q3" = "Was the probation sentence to probation for a crime of violence?",
+  #                        "q4" = "Was the probationer sentenced to probation for an offense under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking) against any of their family or household members?"),
+  #   choices = c("Yes", "No"),
+  #   question_id = "before_june_11_q1",
+  #   next_question = list(
+  #     "Yes" = "no_act_44_relief_result",
+  #     "No" = "before_june_11_q2"
+  #   )
+  # ), 
   list(
     question = "Has the defendant completed any of the following: 
     
@@ -143,9 +123,15 @@ decision_tree <- list(
     question_id = "after_june_11_q2",
     next_question = list(
       "Yes" = "after_june_11_q3",
-      "No" = "no_act_44_relief_result"
+      "No" = "no_act_44_relief_yet_result"
     )
   ),
+  # list(
+  #   question = 
+  #     tags$div(
+  #       tags$p("Now we need to ask you about the probationer's behavior in the following dates: [insert the 6 month period prior to the person's eligibility date]")
+  #     )
+  # )
   list(
     question = 
       tags$div(
@@ -156,22 +142,23 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "before_june_11_q2",
     next_question = list(
-      "Yes" = "before_june_11_q3",
-      "No" = "before_june_11_q3"
+      "Yes" = "before_june_11_q2_mandate_result",
+      "No" = "no_act_44_relief_yet_result"
     )
   ),
-  list(
-    choices = c("Judge Finds Technical Violations", "No Technical Violations"),
-    question_id = "before_june_11_q3",
-    next_question = list(
-      "Judge Finds Technical Violations" = "no_act_44_relief_result",
-      "No Technical Violations" = "section_7_act_44_relief_result"
-    )
-  ),
-  list(
-    result = "You or your loved one is entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by eligibility date",
-    question_id = "section_7_act_44_relief_result"
-  ),
+  # list(
+  #   question = "Is it June 11, 2025 or later, AND has the defendant completed at least 2 years on misdemeanor probation or 4 years on felony probation?",
+  #   question_list = list("q1" = "Did the conviction or convictions that led to probation include any felonies?",
+  #                        "q2" = "When was the probationer sentenced to probation? If there were multiple sentencing dates, use the date that was first in time"),
+  #   choices = c("Yes", "No"),
+  #   date_question = "Yes",
+  #   date_question_n = "q2", 
+  #   question_id = "before_june_11_q2",
+  #   next_question = list(
+  #     "Yes" = "before_june_11_q2_mandate_result",
+  #     "No" = "no_act_44_relief_yet_result"
+  #   )
+  # ),
   list(
     question = "At least 30 days prior to eligibility, probation office must serve a Probation Status Report on defendant, prosecutor, court, defense counsel, and registered victim. Must contain:
 
@@ -221,7 +208,7 @@ decision_tree <- list(
   list(
     question = "Did any of the following occur: 
     
-                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense
+                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense 
                 2) Court finds clear and convincing evidence defendant committed technical offense in the 6 months prior to PRC with identifiable threat to public safety
                 3) Court finds preponderance of the evidence that in the 6 months prior to PRC defendant committed a technical offense in one of these categories:
                     - “Sexual in nature”
@@ -272,6 +259,7 @@ decision_tree <- list(
                 AND court must provide reasons for denial in writing
                 
                 AND probationer is eligible for a PRC within 1 year of PRC date",
+    # choices = character(0),
     question_id = "after_june_11_q8",
     next_question = "after_june_11_q9"
   ),
@@ -310,15 +298,16 @@ decision_tree <- list(
                               "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
          ),
        question_id = "no_act_44_relief_result"
+  ),
+  list(result = 
+         tags$div(
+           tags$p(HTML(paste0("You or your loved one is entitled to apply for early termination or to have their conditions modified under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                              " A judge has discretion to grant or deny this application. Due to the nature of yours or your loved one's convictions they are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
+                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
+         ),
+       question_id = "no_act_44_relief_yet_result"
   )
-  # ,
-  # list(result = 
-  #        tags$div(
-  #          tags$p("On eligibility date, a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"),
-  #          tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
-  #        ),
-  #      question_id = "no_act_44_relief_yet_result"
-  # )
 )
 
 
@@ -326,49 +315,13 @@ decision_tree <- list(
 ui <- fluidPage(
   theme = shinytheme("flatly"),  # Add a colorful theme
   tags$head(
-    # tags$style(HTML(
-    #   ".question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-    #    .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
-    #    .shiny-input-container { margin-bottom: 10px; }
-    #    .btn-container { margin-top: 20px; }
-    #    .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
-    #    .logo { max-width: 200px; height: auto; }"
-    # ))
     tags$style(HTML(
-      "
-      .question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-      .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
-      .shiny-input-container { margin-bottom: 10px; }
-      .btn-container { margin-top: 20px; }
-      .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
-      .logo { max-width: 200px; height: auto; }
-
-      /* Custom button styling */
-      #violation-buttons .btn {
-        margin-right: 10px;
-        margin-bottom: 10px; /* Add bottom margin for spacing */
-        border: 1px solid #ccc;
-        padding: 10px 15px;
-        font-size: 16px;
-        min-width: 200px; /* Adjust as needed */
-        text-align: center;
-      }
-
-      #violation-buttons .btn.active {
-        border-color: #007bff;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-      }
-
-      #violation-buttons .btn-danger {
-        background-color: #dc3545;
-        color: white;
-      }
-
-      #violation-buttons .btn-success {
-        background-color: #28a745;
-        color: white;
-      }
-      "
+      ".question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+       .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
+       .shiny-input-container { margin-bottom: 10px; }
+       .btn-container { margin-top: 20px; }
+       .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
+       .logo { max-width: 200px; height: auto; }"
     ))
   ),
   
@@ -389,140 +342,6 @@ server <- function(input, output, session) {
   history <- reactiveVal(c(1))  # Track navigation history
   sentencing_date <- reactiveVal(NULL)
   selected_answer <- reactiveVal(NULL)
-  felony_or_misdemeanor <- reactiveVal(NULL)
-  eligibility_date <- reactiveVal(NULL)
-  
-  violation_answer <- reactiveVal(NULL)
-  
-  ##Reactive function to calculate eligibility_date
-  calculate_eligibility_date <- reactive({
-    if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())) {
-      base_date <- as.Date(sentencing_date())
-      felony_val <- felony_or_misdemeanor()
-      if(felony_val == "Felony") {
-        potential_date <- base_date + years(4)
-      }else if(felony_val == "Misdemeanor"){
-        potential_date <- base_date + years(2)
-      }
-      eligibility_date_val <- max(potential_date, as.Date("2025-06-11"))
-      return(eligibility_date_val) # Return the value for use in renderUI
-    }else{
-      return(NULL) # Return NULL if dependencies are not yet available
-    }
-  })
-  
-  observe({
-    eligibility_date(calculate_eligibility_date())
-  })
-  
-  ##Eligibility Date Rendering Function
-  render_before_june_11_q3 <- reactive({
-    eligibility_date_val <- eligibility_date()
-    question_content <- tags$div(
-      tags$p(HTML(paste0(
-        "Now we need to ask you about the probationer's behavior in the following dates: ",
-        "from ", "<strong>", format_pretty_date(eligibility_date_val - months(6)), "</strong>",
-        " to ", "<strong>", format_pretty_date(eligibility_date_val), "</strong>",
-        ". A judge will look at the probationer's record and determine whether they have committed any technical violations during this time period. If they do, it changes what relief the probationer can receive. A technical violation is defined as the violation of any specific term of probation that is not a criminal conviction."
-      ))),
-      tags$p("A judge will assess whether the probationer has committed a violation in the following categories:"),
-      tags$ol(type = "I",
-              tags$li("A violation that was sexual in nature"),
-              tags$li("A violation that involved assaultive behavior or included a credible threat to cause bodily injury to another, including incidents involving domestic violence"),
-              tags$li("A violation that involved possession or control of a firearm or dangerous weapon"),
-              tags$li("A violation involved the manufacture, sale, delivery or possession with the intent to manufacture, sell or deliver, a controlled substance or other drug regulated under the act of April 14, 1972 (P.L.233, No.64), known as The Controlled Substance, Drug, Device and Cosmetic Act"),
-              tags$li("A violation in which the probationer absconded from probation"),
-              tags$li("A violation which involved an intentional and unexcused failure to adhere to recommended programming or conditions on three or more separate occasions. Multiple technical violations stemming from the same episode of events do not constitute separate technical violations."),
-              tags$li("A violation that involved an identifiable threat to public safety")
-      ),
-      tags$p("If the judge finds that a violation has occurred, the next steps will be as follows:"),
-      tags$p("If the judge finds no technical violations, the next steps are here:")
-    )
-    if(!is.null(eligibility_date_val)) {
-      tagList(
-        question_content,
-        fluidRow(
-          column(width = 12, # Use all 12 columns to span the full width
-                 div(
-                   id = "violation-buttons", # Container for buttons
-                   actionButton("violation_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1], class = "btn btn-danger"),
-                   actionButton("violation_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2], class = "btn btn-success")
-                 ),
-                 tags$script(HTML(
-                   "
-                 $(document).on('click', '#violation-buttons .btn', function() {
-                   $('#violation-buttons .btn').removeClass('active');
-                   $(this).addClass('active');
-                 });
-                 "
-                 ))
-          )
-        )
-      )
-    }else {
-      tags$p("Calculating eligibility date...")
-    }
-  })
-  
-  render_section_7_act_44_relief_result <- reactive({
-    eligibility_date_val <- eligibility_date()
-    eligibility_date_val_clean <- format_pretty_date(eligibility_date_val)
-    # question_content <-
-    #   tags$div(
-    #     tags$p(HTML(paste0(
-    #       "You or your loved one is entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by ",
-    #       "<strong>", eligibility_date_val_clean, "</strong>", "."
-    #     )))
-    #   )
-
-    question_content <-
-      tags$div(
-        tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"))),
-        tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
-      )
-    
-    if (!is.null(eligibility_date_val)) {
-      tagList(
-        question_content, # Display the result message first
-        fluidRow(
-          column(
-            width = 12,
-            div(
-              class = "btn-container", # Use your existing button styling
-            )
-          )
-        )
-      )
-    } else {
-      tags$p("Calculating eligibility date...")
-    }
-  })
-  
-  # render_no_act_44_relief_yet_result <- reactive({
-  #   eligibility_date_val <- eligibility_date()
-  #   eligibility_date_val_clean <- format_pretty_date(eligibility_date_val)
-  #   question_content <-
-  #     tags$div(
-  #       tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"))),
-  #       tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
-  #     )
-  #   
-  #   if (!is.null(eligibility_date_val)) {
-  #     tagList(
-  #       question_content, # Display the result message first
-  #       fluidRow(
-  #         column(
-  #           width = 12,
-  #           div(
-  #             class = "btn-container", # Use your existing button styling
-  #           )
-  #         )
-  #       )
-  #     )
-  #   } else {
-  #     tags$p("Calculating eligibility date...")
-  #   }
-  # })
   
   output$quiz_ui <- renderUI({
     current_index <- tail(history(), 1)
@@ -553,9 +372,6 @@ server <- function(input, output, session) {
           )
         }
       )
-    }else if(current_question$question_id == "before_june_11_q3") {
-      # Reactive rendering for the specific question
-      render_before_june_11_q3()
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
         div(class = "question-text", current_question$question),
@@ -573,25 +389,50 @@ server <- function(input, output, session) {
               )
             )
           )
-      )
+        )
     }
+    # else if("question" %in% names(current_question) & length(current_question$question_list) > 0 &
+    #          length(current_question$date_question) > 0 & current_question$date_question == "Yes"){
+    #   current_question %>%
+    #     pluck("question_list") %>%
+    #     enframe() %>%
+    #     mutate(value =
+    #              value %>%
+    #              unlist()) %>%
+    #     pmap(
+    #       ~tagList(
+    #         div(class = "question-text", .y),  # The question text
+    #         if(.x %in% current_question$date_question_n){
+    #           dateInput(
+    #             inputId = paste0("answer_", .x),
+    #             label = "Select a date:",
+    #             value = Sys.Date(),      # Default selected date
+    #             min = "1980-01-01",      # Optional: min selectable date
+    #             max = "2030-12-31",      # Optional: max selectable date
+    #             format = "yyyy-mm-dd",   # Date format in the input box
+    #             startview = "month",     # Can be "month", "year", or "decade"
+    #             weekstart = 0,           # Day to start the week on (0 = Sunday)
+    #             language = "en"          # Language for the calendar
+    #           )
+    #         }else{
+    #           radioButtons(
+    #             inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
+    #             label = NULL,  # Label the radio buttons if needed
+    #             choices = current_question$choices  # Choices for the radio buttons
+    #           )
+    #         }
+    #       )
+    #     )
+    # }
     else if("result" %in% names(current_question)) {
-      if(current_question$question_id == "section_7_act_44_relief_result"){
-        render_section_7_act_44_relief_result()
-      }
-      # else if(current_question$question_id == "no_act_44_relief_yet_result"){
-      #   render_no_act_44_relief_yet_result()
-      # }
-      else{
-        div(class = "result-text", current_question$result)
-      }
-      
+      div(class = "result-text", current_question$result)
     }
   })
   
   output$intro_buttons <- renderUI({
     div(
-      actionButton("start_button", "Start", class = "btn btn-success")
+      actionButton("start_practitioner", "Practitioner", class = "btn btn-info"),
+      actionButton("start_person", "Person or Loved One on Probation", class = "btn btn-info", style = "margin-left: 10px;")
     )
   })
   
@@ -606,7 +447,10 @@ server <- function(input, output, session) {
     
     if("result" %in% names(current_question)) {
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    }else if(length(current_question$intro) == 0){
+    }else if(length(current_question$intro) > 0){
+      buttons <- append(buttons, list(actionButton("start_button", "Start", class = "btn btn-success")))
+    }
+    else{
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
     
@@ -622,10 +466,7 @@ server <- function(input, output, session) {
         sentencing_date(as.Date(input$answer))
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
       }
-    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0){
-      if(current_question$question_id == "before_june_11_q2"){
-        ifelse(input$answer == "Yes", felony_or_misdemeanor("Felony"), felony_or_misdemeanor("Misdemeanor"))
-      }
+    }else if(length(current_question$question_list) == 0){
       selected_answer(input$answer)
     }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
@@ -637,6 +478,17 @@ server <- function(input, output, session) {
         selected_answer("No")
       }
     }
+    # else if(question_id == "after_june_11_q2"){
+    #   if(input[["answer_q2"]] < as.Date("2025-06-11")){
+    #     date = as.Date("2025-06-11")
+    #   }else{
+    #     if(input[["answer_q1"]] == "Yes"){
+    #       date = as.Date(input[["answer_q2"]]) + month(4)
+    #     }else{
+    #       date = as.Date(input[["answer_q2"]] + month(2))
+    #     }
+    #   }
+    # }
   })
   
   observeEvent(input$start_button, {
@@ -646,17 +498,27 @@ server <- function(input, output, session) {
     history(c(history(), next_index))
   })
   
+  # observeEvent(input$next_button, {
+  #   current_index <- tail(history(), 1)
+  #   current_question <- decision_tree[[current_index]]
+  #   
+  #   if("choices" %in% names(current_question)) {
+  #     next_id <- current_question$next_question[[selected_answer()]]
+  #   }else{
+  #     next_id <- current_question$next_question
+  #   }
+  #   
+  #   next_index <- which(map_chr(decision_tree, "question_id") == next_id)
+  #   history(c(history(), next_index))
+  # })
+  
   observeEvent(input$next_button, {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
     if("choices" %in% names(current_question)) {
       if(length(current_question$question_list) == 0) {
-        if (current_question$question_id == "before_june_11_q3") {
-          next_id <- current_question$next_question[[violation_answer()]]
-        } else {
-          next_id <- current_question$next_question[[selected_answer()]]
-        }
+        next_id <- current_question$next_question[[selected_answer()]]
       }else{
         # Check if any of the multiple radio buttons have a "Yes" answer
         answer_ids <- names(input)[grepl("^answer_q", names(input))]
@@ -671,18 +533,12 @@ server <- function(input, output, session) {
       next_id <- current_question$next_question
     }
     
+    if(current_question$question_id == "before_june_11_q2"){
+      
+    }
+    
     next_index <- which(map_chr(decision_tree, "question_id") == next_id)
     history(c(history(), next_index))
-  })
-  
-  observeEvent(input$violation_yes, {
-    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1])
-    shinyjs::click("next_button") # Trigger the Next button click
-  })
-  
-  observeEvent(input$violation_no, {
-    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2])
-    shinyjs::click("next_button") # Trigger the Next button click
   })
   
   observeEvent(input$back_button, {
