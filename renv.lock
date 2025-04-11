@@ -1371,6 +1371,19 @@
       ],
       "Hash": "2356d33ce915ad415b1fe9a476c99a7d"
     },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "2.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "digest",
+        "jsonlite",
+        "shiny"
+      ],
+      "Hash": "802e4786b353a4bb27116957558548d5"
+    },
     "shinythemes": {
       "Package": "shinythemes",
       "Version": "1.2.0",

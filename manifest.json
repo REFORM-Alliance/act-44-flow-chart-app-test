@@ -3333,6 +3333,40 @@
         "RemoteSha": "0.9.0"
       }
     },
+    "shinyjs": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "description": {
+        "Package": "shinyjs",
+        "Title": "Easily Improve the User Experience of Your Shiny Apps in Seconds",
+        "Version": "2.1.0",
+        "Authors@R": "person(\"Dean\", \"Attali\", \n    email = \"daattali@gmail.com\",\n    role = c(\"aut\", \"cre\"),\n    comment= c(ORCID=\"0000-0002-5645-3493\"))",
+        "Description": "Perform common useful JavaScript operations in Shiny apps that will\n    greatly improve your apps without having to know any JavaScript. Examples\n    include: hiding an element, disabling an input, resetting an input back to\n    its original value, delaying code execution by a few seconds, and many more\n    useful functions for both the end user and the developer. 'shinyjs' can also\n    be used to easily call your own custom JavaScript functions from R.",
+        "URL": "https://deanattali.com/shinyjs/",
+        "BugReports": "https://github.com/daattali/shinyjs/issues",
+        "Depends": "R (>= 3.1.0)",
+        "Imports": "digest (>= 0.6.8), jsonlite, shiny (>= 1.0.0)",
+        "Suggests": "htmltools (>= 0.2.9), knitr (>= 1.7), rmarkdown, shinyAce,\nshinydisconnect, testthat (>= 0.9.1)",
+        "License": "MIT + file LICENSE",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.1.1",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "no",
+        "Packaged": "2021-12-21 11:32:22 UTC; Dean-X1C",
+        "Author": "Dean Attali [aut, cre] (<https://orcid.org/0000-0002-5645-3493>)",
+        "Maintainer": "Dean Attali <daattali@gmail.com>",
+        "Repository": "RSPM",
+        "Date/Publication": "2021-12-23 10:10:02 UTC",
+        "Built": "R 4.4.0; ; 2024-04-25 02:06:04 UTC; unix",
+        "RemoteType": "standard",
+        "RemotePkgRef": "shinyjs",
+        "RemoteRef": "shinyjs",
+        "RemoteRepos": "https://packagemanager.posit.co/cran/latest",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "2.1.0"
+      }
+    },
     "shinythemes": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.posit.co/cran/latest",
@@ -4175,7 +4209,7 @@
       "checksum": "735819e739bb540865096e71436abe3c"
     },
     ".Rprofile": {
-      "checksum": "1b2570c83cbf32dcf62ad7d0daa73872"
+      "checksum": "cca139f5f1fef54d6e44fec7ed8653b9"
     },
     "app.R": {
       "checksum": "25c5e0ffdf3e222d586dd426990ca72a"
@@ -4211,7 +4245,7 @@
       "checksum": "9b9699d7c2cb5f875b6f33cbd4ca33d0"
     },
     "renv.lock": {
-      "checksum": "141259977e91e52fb859ec5acb60995f"
+      "checksum": "1616332f664672dedefe9c099923ad9c"
     },
     "www/act-44-early-termination-flow-chart.png": {
       "checksum": "2c5fb2fb3f637be59ff212c949b0c722"
