@@ -4175,10 +4175,16 @@
       "checksum": "735819e739bb540865096e71436abe3c"
     },
     ".Rprofile": {
-      "checksum": "bce0e4737b0d1135c0ab4f68b961d949"
+      "checksum": "1b2570c83cbf32dcf62ad7d0daa73872"
     },
     "app.R": {
-      "checksum": "822a9dfcf67465e1b7528517b666b9b8"
+      "checksum": "25c5e0ffdf3e222d586dd426990ca72a"
+    },
+    "R/old-R/app-clean-v2.R": {
+      "checksum": "97deabdc13f42439254f5458f8688259"
+    },
+    "R/old-R/app-clean.R": {
+      "checksum": "4968bf0857ae064806ee5a02f4c650a7"
     },
     "R/old-R/app.R": {
       "checksum": "d7de3d4286def258a70fbc8c61e9c6ec"

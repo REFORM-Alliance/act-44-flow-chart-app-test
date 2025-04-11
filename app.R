@@ -9,6 +9,7 @@ library(rsconnect)
 library(shinyWidgets)
 library(lubridate)
 library(scales)
+library(shinyjs)
 
 
 ####Helper Functions####
