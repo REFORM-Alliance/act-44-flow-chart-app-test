@@ -15,7 +15,6 @@ library(shinyjs)
 ####Helper Functions####
 ##Pretty Dates
 format_pretty_date <- function(date, use_suffix = TRUE) {
-  # Ensure it's a Date object
   date <- as.Date(date)
   
   day_num <- lubridate::day(date)
@@ -26,10 +25,10 @@ format_pretty_date <- function(date, use_suffix = TRUE) {
   }
   
   formatted <- paste0(
-    format(date, "%B "),  # Month full name
+    format(date, "%B "),  
     day_str,
     ", ",
-    format(date, "%Y")    # Year
+    format(date, "%Y")
   )
   
   return(formatted)
@@ -312,29 +311,13 @@ decision_tree <- list(
          ),
        question_id = "no_act_44_relief_result"
   )
-  # ,
-  # list(result = 
-  #        tags$div(
-  #          tags$p("On eligibility date, a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"),
-  #          tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
-  #        ),
-  #      question_id = "no_act_44_relief_yet_result"
-  # )
 )
 
 
 ####Create App####
 ui <- fluidPage(
-  theme = shinytheme("flatly"),  # Add a colorful theme
+  theme = shinytheme("flatly"),  
   tags$head(
-    # tags$style(HTML(
-    #   ".question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-    #    .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
-    #    .shiny-input-container { margin-bottom: 10px; }
-    #    .btn-container { margin-top: 20px; }
-    #    .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
-    #    .logo { max-width: 200px; height: auto; }"
-    # ))
     tags$style(HTML(
       "
       .question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
@@ -373,12 +356,11 @@ ui <- fluidPage(
     ))
   ),
   
-  # Add logo at the top
   div(class = "logo-container",
       img(src = "reform-logo-charcoal.png", class = "logo")
   ),
   
-  titlePanel(strong("Act 44 Early Termination Tool")), # Make title bold
+  titlePanel(strong("Act 44 Early Termination Tool")),
   uiOutput("quiz_ui"),
   div(class = "btn-container",
       uiOutput("button_ui")
@@ -387,7 +369,7 @@ ui <- fluidPage(
 
 ##Server
 server <- function(input, output, session) {
-  history <- reactiveVal(c(1))  # Track navigation history
+  history <- reactiveVal(c(1))  
   sentencing_date <- reactiveVal(NULL)
   selected_answer <- reactiveVal(NULL)
   felony_or_misdemeanor <- reactiveVal(NULL)
@@ -406,9 +388,9 @@ server <- function(input, output, session) {
         potential_date <- base_date + years(2)
       }
       eligibility_date_val <- max(potential_date, as.Date("2025-06-11"))
-      return(eligibility_date_val) # Return the value for use in renderUI
+      return(eligibility_date_val) 
     }else{
-      return(NULL) # Return NULL if dependencies are not yet available
+      return(NULL)
     }
   })
   
@@ -443,9 +425,9 @@ server <- function(input, output, session) {
       tagList(
         question_content,
         fluidRow(
-          column(width = 12, # Use all 12 columns to span the full width
+          column(width = 12, 
                  div(
-                   id = "violation-buttons", # Container for buttons
+                   id = "violation-buttons", 
                    actionButton("violation_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1], class = "btn btn-danger"),
                    actionButton("violation_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2], class = "btn btn-success")
                  ),
@@ -468,14 +450,7 @@ server <- function(input, output, session) {
   render_section_7_act_44_relief_result <- reactive({
     eligibility_date_val <- eligibility_date()
     eligibility_date_val_clean <- format_pretty_date(eligibility_date_val)
-    # question_content <-
-    #   tags$div(
-    #     tags$p(HTML(paste0(
-    #       "You or your loved one is entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by ",
-    #       "<strong>", eligibility_date_val_clean, "</strong>", "."
-    #     )))
-    #   )
-
+    
     question_content <-
       tags$div(
         tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"))),
@@ -484,12 +459,12 @@ server <- function(input, output, session) {
     
     if (!is.null(eligibility_date_val)) {
       tagList(
-        question_content, # Display the result message first
+        question_content, 
         fluidRow(
           column(
             width = 12,
             div(
-              class = "btn-container", # Use your existing button styling
+              class = "btn-container", 
             )
           )
         )
@@ -499,32 +474,6 @@ server <- function(input, output, session) {
     }
   })
   
-  # render_no_act_44_relief_yet_result <- reactive({
-  #   eligibility_date_val <- eligibility_date()
-  #   eligibility_date_val_clean <- format_pretty_date(eligibility_date_val)
-  #   question_content <-
-  #     tags$div(
-  #       tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"))),
-  #       tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
-  #     )
-  #   
-  #   if (!is.null(eligibility_date_val)) {
-  #     tagList(
-  #       question_content, # Display the result message first
-  #       fluidRow(
-  #         column(
-  #           width = 12,
-  #           div(
-  #             class = "btn-container", # Use your existing button styling
-  #           )
-  #         )
-  #       )
-  #     )
-  #   } else {
-  #     tags$p("Calculating eligibility date...")
-  #   }
-  # })
-  
   output$quiz_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
@@ -532,7 +481,7 @@ server <- function(input, output, session) {
     if(length(current_question$intro) > 0){
       tagList(
         current_question$content_above_buttons,
-        uiOutput("intro_buttons"), # Placeholder for buttons
+        uiOutput("intro_buttons"),
         current_question$content_below_buttons
       )
     }else if("question" %in% names(current_question) & length(current_question$question_list) == 0) {
@@ -555,7 +504,6 @@ server <- function(input, output, session) {
         }
       )
     }else if(current_question$question_id == "before_june_11_q3") {
-      # Reactive rendering for the specific question
       render_before_june_11_q3()
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
@@ -566,11 +514,11 @@ server <- function(input, output, session) {
           unnest(value) %>% 
           pmap(
             ~tagList(
-              div(class = "question-text", tags$div(tags$p(HTML(.y)))),  # The question text
+              div(class = "question-text", tags$div(tags$p(HTML(.y)))),
               radioButtons(
-                inputId = paste0("answer_", .x),  # Dynamic input ID based on question_id (e.g., "answer_q1")
-                label = NULL,  # Label the radio buttons if needed
-                choices = current_question$choices  # Choices for the radio buttons
+                inputId = paste0("answer_", .x), 
+                label = NULL,
+                choices = current_question$choices
               )
             )
           )
@@ -579,12 +527,8 @@ server <- function(input, output, session) {
     else if("result" %in% names(current_question)) {
       if(current_question$question_id == "section_7_act_44_relief_result"){
         render_section_7_act_44_relief_result()
-      }
-      # else if(current_question$question_id == "no_act_44_relief_yet_result"){
-      #   render_no_act_44_relief_yet_result()
-      # }
-      else{
-        div(class = "result-text", current_question$result)
+      }else{
+        div(class = "question-text", current_question$result)
       }
       
     }
@@ -659,7 +603,6 @@ server <- function(input, output, session) {
           next_id <- current_question$next_question[[selected_answer()]]
         }
       }else{
-        # Check if any of the multiple radio buttons have a "Yes" answer
         answer_ids <- names(input)[grepl("^answer_q", names(input))]
         responses <- sapply(answer_ids, function(id) input[[id]])
         if(any(responses == "Yes")) {
@@ -678,17 +621,17 @@ server <- function(input, output, session) {
   
   observeEvent(input$violation_yes, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1])
-    shinyjs::click("next_button") # Trigger the Next button click
+    shinyjs::click("next_button")
   })
   
   observeEvent(input$violation_no, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2])
-    shinyjs::click("next_button") # Trigger the Next button click
+    shinyjs::click("next_button")
   })
   
   observeEvent(input$back_button, {
     if(length(history()) > 1) {
-      history(history()[1:(length(history()) - 1)])  # Remove last step
+      history(history()[1:(length(history()) - 1)])
     }
   })
   
