@@ -4206,13 +4206,13 @@
   },
   "files": {
     ".RData": {
-      "checksum": "735819e739bb540865096e71436abe3c"
+      "checksum": "e8bb206a1ad018f0c07df24f4a1d4938"
     },
     ".Rprofile": {
-      "checksum": "cca139f5f1fef54d6e44fec7ed8653b9"
+      "checksum": "ea432a9a238d0a87323453236853f5d7"
     },
     "app.R": {
-      "checksum": "25c5e0ffdf3e222d586dd426990ca72a"
+      "checksum": "7c2d6ae4cff301fdd4c3f39a9d8a394f"
     },
     "R/old-R/app-clean-v2.R": {
       "checksum": "97deabdc13f42439254f5458f8688259"
@@ -4221,7 +4221,7 @@
       "checksum": "4968bf0857ae064806ee5a02f4c650a7"
     },
     "R/old-R/app.R": {
-      "checksum": "d7de3d4286def258a70fbc8c61e9c6ec"
+      "checksum": "74ac693ccea096458eb55f0b321f2295"
     },
     "R/old-R/app2.R": {
       "checksum": "aa4eea4f839c7f2d9f118a34318597a2"
@@ -4243,6 +4243,9 @@
     },
     "R/old-R/app7.R": {
       "checksum": "9b9699d7c2cb5f875b6f33cbd4ca33d0"
+    },
+    "R/old-R/app8.R": {
+      "checksum": "b74246fca1a40cc5e065a35800d4fc9a"
     },
     "renv.lock": {
       "checksum": "1616332f664672dedefe9c099923ad9c"
