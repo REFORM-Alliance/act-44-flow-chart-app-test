@@ -561,18 +561,6 @@ server <- function(input, output, session){
   })
   
   calculate_eligibility_date_prc <- reactive({
-    print("--- calculate_eligibility_date_prc() called ---")  # Debugging start
-    print(paste("sentencing_date():", sentencing_date()))
-    print(paste("felony_or_misdemeanor():", felony_or_misdemeanor()))
-    print(paste("sentencing_length_year():", sentencing_length_year()))
-    print(paste("sentencing_length_month():", sentencing_length_month()))
-    print(paste("education_credits_answer():", education_credits_answer()))
-    print(paste("education_credits_more_than_2_answer():", education_credits_more_than_2_answer()))
-    print(paste("same_conduct_answer():", same_conduct_answer()))
-    print(paste("multiple_misdemeanors():", multiple_misdemeanors()))
-    print(paste("probation_after_parole_answer():", probation_after_parole_answer()))
-    print(paste("final_year_of_parole_answer():", final_year_of_parole_answer()))
-    
     req(sentencing_date(), felony_or_misdemeanor(), sentencing_length_year(),
         sentencing_length_month(), education_credits_answer())
     
