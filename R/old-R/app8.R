@@ -490,6 +490,7 @@ decision_tree <- list(
 
 ####Create App####
 ui <- fluidPage(
+  shinyjs::useShinyjs(),
   theme = shinytheme("flatly"),  
   tags$head(
     tags$style(HTML(
@@ -1136,7 +1137,7 @@ server <- function(input, output, session){
       tagList(
         div(class = "question-text", current_question$question),
         if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0){
-          radioButtons("answer", NULL, choices = current_question$choices)
+          radioButtons("answer", label = NULL, selected = character(0), choices = current_question$choices)
         }else if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) > 0){
           dateInput(
             inputId = "answer",
@@ -1180,6 +1181,7 @@ server <- function(input, output, session){
               div(class = "question-text", tags$div(tags$p(HTML(.y)))),
               radioButtons(
                 inputId = paste0("answer_", .x), 
+                selected = character(0),
                 label = NULL,
                 choices = current_question$choices
               )

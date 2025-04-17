@@ -14,13 +14,13 @@ library(shinyjs)
 
 ####Helper Functions####
 ##Pretty Dates
-format_pretty_date <- function(date, use_suffix = TRUE) {
+format_pretty_date <- function(date, use_suffix = TRUE){
   date <- as.Date(date)
   
   day_num <- lubridate::day(date)
-  day_str <- if (use_suffix) {
+  day_str <- if(use_suffix){
     scales::ordinal(day_num)
-  } else {
+  }else{
     as.character(day_num)
   }
   
@@ -75,24 +75,329 @@ decision_tree <- list(
     date_question = "Yes",
     question_id = "defendant_sentencing_date",
     next_question = list(
-      "Yes" = "after_june_11_q1",
-      "No" = "before_june_11_q1"
+      "Yes" = "prc_flow_q1",
+      "No" = "section_7_q1"
     )
   ),
   list(
-    question = "Does the defendant's conviction include any of the following: 
-    
-                1) Crime of Violence OR
-                2) Most homicide charges OR 
-                3) Most sex offender registration offenses OR 
-                4) Some domestic violence OR 
-                5) Some stalking charges", 
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you some questions about the charge or charges for which you were sentenced to probation. This is important because people sentenced for certain types of crimes are eligible for different kinds of legal options than others.")),
+        tags$p(HTML(paste0("Do you know the crimes for which you or your loved one were convicted? If not, you can look them up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+        tags$p("Were you sentenced to probation for one of the following types of crimes?"),
+        tags$ul(
+          tags$li(HTML(paste0("A ", 
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=14&subsctn=0' target='_blank'>Crime of Violence</a>"))),
+          tags$li(HTML(paste0("A crime related to sex offender registration (defined either ", 
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=91&subsctn=0' target='_blank'>here</a>", 
+                              "or", 
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=99&subsctn=51' target='_blank'>here</a>)"))),
+          tags$li(HTML(paste0("A crime of ", 
+                              "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank'>homicide</a>)", 
+                              ", including manslaughter, causing or aiding suicide, or drug delivery resulting in death"))),
+          tags$li(HTML(paste0("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027..HTM' target='_blank'>Simple assault</a>",  
+                              " committed against a family or household member"))),
+          tags$li(HTML("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027.009.001..HTM' target='_blank'>Stalking</a>"))
+        )
+      ),
     choices = c("Yes", "No"),
-    question_id = "after_june_11_q1",
+    question_id = "prc_flow_q1",
     next_question = list(
-      "Yes" = "no_act_44_relief_result",
-      "No" = "after_june_11_q2"
+      "Yes" = "prc_result_1",
+      "No" = "prc_flow_q2"
     )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p(HTML(paste0("You are eligible to apply for early termination of probation, or for modifications of probation conditions, under ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.",
+                           " A judge has discretion to grant or deny this application at any time. However, you are not eligible for early termination or the modification of probation conditions under Act 44. Please consult with a lawyer with any questions about your eligibility.")))
+      ),
+    question_id = "prc_result_1"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. We need to ask about this to determine when you are eligible for a mandatory conference as part of Act 44. Do you know if any of the charges for which you were sentenced to probation was a felony? If not, you can look that up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>"))),
+        tags$p("Were any of the charges for which you were sentenced to probation a felony?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q2",
+    next_question = list(
+      "Yes" = "prc_flow_q3_1",
+      "No" = "prc_flow_q3_2"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p("Did you start serving probation immediately after being on parole?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q3_1",
+    next_question = list(
+      "Yes" = "prc_flow_q3_1_final_year_parole",
+      "No" = "prc_flow_q4"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p("Did you serve the final year of parole without any violations?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q3_1_final_year_parole",
+    next_question = list(
+      "Yes" = "prc_flow_q4", 
+      "No" = "prc_flow_q4"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(HTML(paste0("<strong>", "Next we need to ask more about your misdemeanor sentence, to help determine when you are eligible for a mandatory probation review conference as part of Act 44. Were you convicted of multiple misdemeanors that resulted in consecutive sentences? Again, if you don’t know this, you can look it up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>")))
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q3_2",
+    next_question = list(
+      "Yes" = "prc_flow_q3_3",
+      "No" = "prc_flow_q4"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p("We need to ask one more question about these misdemeanor convictions, to help determine when you are eligible for a mandatory probation review conference. The law treats multiple misdemeanor convictions differently depending on whether the crimes were related to each other. Were the convictions from the same “conduct or arising from the same criminal episode?” Or were they  based on separate conduct from separate crimes?")
+      ),
+    choices = c("Same Conduct", "Different Conduct"),
+    question_id = "prc_flow_q3_3",
+    next_question = list(
+      "Same Conduct" = "prc_flow_q4",
+      "Different Conduct" = "prc_flow_q4"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a mandatory conference as part of Act 44. Do you know how long the sentence was? If not, you can look it up ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>"))),
+        tags$p("Please enter the sentence length here. If you are serving multiple probation sentences consecutively, please add the sentences together.")
+      ),
+    drop_down = TRUE,
+    drop_down_options = c("Month", "Year"),
+    question_id = "prc_flow_q4",
+    next_question = "prc_flow_q5"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you about what you have been doing while on probation. Act 44 allows those who have finished certain programs or graduated from high school or college while on probation to be eligible for early termination earlier than others.")),
+        tags$p("Did you or your loved one do any of the following things while on probation?"),
+        tags$ul(
+          tags$li("Earn a high school diploma or GED"),
+          tags$li("Earn an associate degree from an accredited university, college, seminary college, community college, or two-year college"),
+          tags$li("Earn a bachelor's degree from an accredited university, college, or seminary college"),
+          tags$li("Earn a master's or other graduate degree from an accredited university, college, or seminary college"),
+          tags$li("Obtain a vocational or occupational license, certificate, registration, or permit that was approved by your probation officer"),
+          tags$li("Complete a certified vocational, certified technical, or certified career education or training program that was approved by your probation officer"),
+          tags$li("Finish a program or condition designed to improve your life that was ordered by the court at sentencing and approved by your probation officer?")
+        )
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q5",
+    next_question = list(
+      "Yes" = "prc_flow_q6",
+      "No" = "prc_flow_q7"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p("Did you complete two or more of these achievements while on probation?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q6",
+    next_question = list(
+      "Yes" = "prc_flow_q7",
+      "No" = "prc_flow_q7"
+    )
+  ),
+  list(question = "",
+       question_id = "prc_flow_q7",
+       next_question = "prc_flow_q8"),
+  list(question = 
+         tags$div(
+           tags$p(HTML(paste0("After receiving the Probation Status Report, you and the prosecutor have 30 days to object to the findings and recommendations of your probation office. This is ", 
+                              "<u>", "extremely important", "</u>", "because if neither you nor your prosecutor object, these recommendations ", 
+                              "<u>", "must", "</u>", " be enforced. This means that if your probation office recommends early termination and your prosecutor does not object, the court must terminate your probation! But it also means that if you do not agree with your probation office’s recommendations, you should strongly consider objecting to this report, and should contact your lawyer about your options."))),
+           tags$p("If you or your prosecutor object to this report, the next step is a mandatory court procedure called a Probation Review Conference. What happens at a Probation Review Conference is extremely important because it may help you decide whether to object to this report or not. In some cases, a court will be required to grant you early termination at a Probation Review Conference! In other cases, a court will not be allowed to do so. Knowing how these conferences work will help you make the right decision about objecting to the Probation Status Report or not."),
+           tags$p("Click NEXT to find out what happens at a Probation Review Conference.")
+         ),
+       question_id = "prc_flow_q8", 
+       next_question = "prc_flow_q9"),
+  list(
+    question = "",
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q9",
+    next_question = list(
+      "Yes" = "prc_flow_q9_result",
+      "No" = "prc_flow_q10"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
+        tags$p("Due to your conviction, a judge cannot grant you early termination at your Probation Review Conference. However, you are always eligible to apply for early termination under under 42 P.A.C.S. § 9771. A judge has discretion to grant such an application at any time regardless of any convictions or other issues."), 
+        tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” You are eligible for another probation review conference within one year of the Conference, where the judge can again consider changing the conditions of your probation but cannot terminate probation early.")
+      ),
+    question_id = "prc_flow_q9_result"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next, a judge will look at any alleged bad acts you have committed while on probation. This is important because if the judge finds you have committed one of these acts, they are not allowed to grant you early termination.")),
+        tags$p("First, the judge will consider whether there is clear and convincing evidence that you violated the terms of your probation in the 6 months prior to the conference in a way that constituted an “identifiable threat to public safety.” The term “clear and convincing” evidence has important legal meaning: it means more simply making it more likely than not that the violation occurred. You should consult an attorney to discuss exactly what it means, if this is a potential issue for you."),
+        tags$p("The options available at a Probation Review Conference change depending on whether a judge finds this “identifiable threat to public safety.” Click below to see what happens next.")
+      ),
+    choices = c("Found Threat to Public Safety", "Did Not Find Threat to Public Safety"),
+    question_id = "prc_flow_q10",
+    next_question = list(
+      "Found Threat to Public Safety" = "prc_flow_q10_result",
+      "Did Not Find Threat to Public Safety" = "prc_flow_q11"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
+        tags$p(HTML(paste0("Due to the judge’s findings of a threat to public safety in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", 
+                           "<u>", "at this time", "</u>", 
+                           ". However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
+        tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ",
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                           "A judge has discretion to grant such an application at any time regardless of any other issues."))),
+        tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the date of the threat to public safety the judge found. Remember, you are eligible for another Probation Review Conference within 6 months of the date of this threat, and at that time can again consider changing the conditions of your probation or terminating probation early.")
+      ),
+    question_id = "prc_flow_q10_result"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next, a judge will look at another type of alleged bad act you may have committed while on probation. Again, this is important because if the judge finds you have committed one of these acts, they are not allowed to grant you early termination.")),
+        tags$p("At this point, the judge will look at technical violations that occurred in the past 6 months. These acts must have occurred in the 6 months before the Conference, anything older than 6 months does not count.  The judge will determine if there is a preponderance of the evidence that you committed a violation of the terms of your probation in a number of different categories listed below.  A “preponderance of the evidence” means that the evidence makes it more likely than not that you committed one of these acts. The categories are as follows:"),
+        tags$ul(
+          tags$li('"Sexual in nature"'), 
+          tags$li('"Assaultive behavior" or "credible threats to cause bodily injury to another"'),
+          tags$li("Possession or control of firearm or dangerous weapon"),
+          tags$li("Manufacture, sale, delivery, or possession with intent to sell drugs"),
+          tags$li("Absconded"),
+          tags$li("Unexcused and intentional failure to programming or conditions 3 or more separate occasions")
+        ),
+        tags$p("The options available at a Probation Review Conference change depending on whether a judge finds that you committed one of these technical violations. Click below to see what happens next.")
+      ),
+    choices = c("Technical Violation Found", "No Technical Violation Found"),
+    question_id = "prc_flow_q11",
+    next_question = list(
+      "Technical Violation Found" = "prc_flow_q11_result",
+      "No Technical Violation Found" = "prc_flow_q12"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
+        tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", "<u>", "at this time", "</u>", ". However, you are eligible for another Probation Review Conference 1 year after this Conference."))),
+        tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>", 
+                           ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
+        tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the technical violation or violations the judge found, so you are informed of the judge’s decision-making.")
+      ),
+    question_id = "prc_flow_q11_result"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next, a judge will look at  other behavior during the entirety of your time on probation.  This is different than the last 2 steps where the judge only looked at behavior in the past 6 months. ")),
+        tags$p("For this step, the judge will look at your behavior in two categories, for the entire time you have been on probation:"),
+        tags$ol(
+          type = "1",
+          tags$li("Clear and convincing evidence that you “created an identifiable threat to public safety”"),
+          tags$li("A preponderance of the evidence that you have not “successfully completed all treatment or other programs required as a condition of probation,” and also that terminating probation would prevent you from continuing in the programming that the court finds is necessary for your rehabilitation, or that it would create a “substantial likelihood” that you would stop the treatment or program.")
+        ),
+        tags$p("As a reminder, the difference between “clear and convincing evidence” and a “preponderance of the evidence” is significant, and you should consult a lawyer with any questions about these or other legal issues."),
+        tags$p("After the judge makes a finding on these two questions, they may be required to grant early termination, so click below to see what happens next."),
+        tags$p(HTML("Did the judge answer <b>YES</b> to either of these two questions?"))
+      ), 
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q12",
+    next_question = list(
+      "Yes" = "prc_flow_q12_result", 
+      "No" = "prc_flow_q13"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p("At your Probation Review Conference, a court is not required to grant you early termination. However, the judge can still grant early termination in its discretion! The judge is permitted to consider any information you provide, so if you are seeking early termination or to have your conditions changed it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
+        tags$p("Also please be aware that even if the court does not grant you early termination, they can also change the conditions of your probation, and can reduce or increase the severity of those conditions. Again, it is important to present the judge with whatever information you can to best make your arguments!"),
+        tags$p('If the judge does not grant you early termination at this time, you are eligible for another Probation Review Conference 1 year after this Conference. Also, the court must provide you with “written notice of the court\'s order detailing the court\'s findings.”')
+      ),
+    question_id = "prc_flow_q12_result"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("We have only one more question to answer before determining whether the judge will be required to grant you early termination.")),
+        tags$p("That question is whether you have paid all restitution you owe, if any. Have you paid all of your restitution?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q13",
+    next_question = list(
+      "Yes" = "prc_flow_q13_result",
+      "No" = "prc_flow_q14"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p(HTML(paste0("<strong>", "Congratulations, the judge ", "<u>", "must", "</u>", 
+                           "grant you early termination of probation!", "</strong>")))
+      ),
+    question_id = "prc_flow_q13_result"
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("You are still eligible for early termination!")),
+        tags$p("However, the judge is not forced to grant you early termination because you have not paid your restitution. The judge has the power to grant or deny early termination, or to modify the conditions of your probation. However, if you have have paid at least 50% of your restitution, or if you have made a “good faith” effort to pay the restitution you owe, then it impacts what a judge is required to do."),
+        tags$p("Have you paid at least 50% of your restitution, or made a “good faith” effort to pay?")
+      ),
+    choices = c("Yes", "No"),
+    question_id = "prc_flow_q14", 
+    next_question = list(
+      "Yes" = "prc_flow_q14_result",
+      "No" = "prc_flow_q12_result"
+    )
+  ),
+  list(
+    result = 
+      tags$div(
+        tags$p("You are still eligible for early termination! However, the judge is not forced to grant you early termination because you have not paid your restitution. The judge is permitted to consider any information you provide, so it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
+        tags$p("Because you have paid at least 50% of your restitution, or made a “good faith” effort to pay it, if the judge does not grant you early termination they must place you on administrative probation. This means that the only terms of your probation must be as follows:"),
+        tags$ol(
+          type = "1",
+          tags$li("Required contact with probation between 1-4 times per year"),
+          tags$li('Required to notify the court of any change in address or employment “within a reasonable period of time”'),
+          tags$li("Required to pay restitution “as ordered by the court on a schedule or payment plan that” you can afford to pay"),
+          tags$li("Does not require fees or costs")
+        )
+      ),
+    question_id = "prc_flow_q14_result"
   ),
   list(
     question = 
@@ -105,11 +410,11 @@ decision_tree <- list(
                          "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank'>crime of violence</a>"),
                          "q3" = "Assault or stalking against a family or household member? This only counts if they were convicted under under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking)"),
     choices = c("Yes", "No"),
-    question_id = "before_june_11_q1",
+    question_id = "section_7_q1",
     next_question = 
       list(
         "Yes" = "no_act_44_relief_result",
-        "No" = "before_june_11_q1_1"
+        "No" = "section_7_q1_1"
       )
   ),
   list(
@@ -119,32 +424,12 @@ decision_tree <- list(
         tags$p("First of all, were you or a loved one convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
       ),
     choices = c("Yes", "No"), 
-    question_id = "before_june_11_q1_1",
+    question_id = "section_7_q1_1",
     next_question = 
       list(
         "Yes" = "no_act_44_relief_result",
-        "No" = "before_june_11_q2"
+        "No" = "section_7_q2"
       )
-  ),
-  list(
-    question = "Has the defendant completed any of the following: 
-    
-                1) 50% of their aggregate sentence OR 
-                2) Two years on misdemeanor probation OR
-                3) Four years on felony probation or misdemeanor probation based on mulitple distinct misdemeanor convictions with consecutive sentences
-                
-                MINUS any of the following: 
-                
-                1) 12 months if the probation sentence was consecutive to state prison sentence and person did not violate parole in their last 12  or more months OR
-                2) 6 months for any educational achievement or other approved benchmark (can receive twice if on felony probation)
-    
-                AND completed a year of probation?",
-    choices = c("Yes", "No"),
-    question_id = "after_june_11_q2",
-    next_question = list(
-      "Yes" = "after_june_11_q3",
-      "No" = "no_act_44_relief_result"
-    )
   ),
   list(
     question = 
@@ -154,15 +439,15 @@ decision_tree <- list(
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.")))
       ),
     choices = c("Yes", "No"),
-    question_id = "before_june_11_q2",
+    question_id = "section_7_q2",
     next_question = list(
-      "Yes" = "before_june_11_q3",
-      "No" = "before_june_11_q3"
+      "Yes" = "section_7_q3",
+      "No" = "section_7_q3"
     )
   ),
   list(
     choices = c("Judge Finds Technical Violations", "No Technical Violations"),
-    question_id = "before_june_11_q3",
+    question_id = "section_7_q3",
     next_question = list(
       "Judge Finds Technical Violations" = "no_act_44_relief_result",
       "No Technical Violations" = "section_7_act_44_relief_result"
@@ -171,136 +456,6 @@ decision_tree <- list(
   list(
     result = "You or your loved one is entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by eligibility date",
     question_id = "section_7_act_44_relief_result"
-  ),
-  list(
-    question = "At least 30 days prior to eligibility, probation office must serve a Probation Status Report on defendant, prosecutor, court, defense counsel, and registered victim. Must contain:
-
-                1) Eligibility date AND
-                2) Any technical violations within 6 months AND
-                3) Convictions while on probation or in custody on underlying case AND
-                4) Completion of programs AND
-                5) Restitution payments AND
-                6) A description of progress AND
-                7) Recommendation that probation be terminated, conditions modified, or continue under current conditions",
-    question_id = "after_june_11_q3",
-    next_question = "after_june_11_q4"
-  ),
-  list(
-    result = "Court gives prosecutor and defendant opportunity to provide input prior to decision
-    
-              AND 
-    
-              Court determines whether to terminate early or modify probation conditions by eligibility date (no grace period)
-
-              Only legal requirement is that court must consider educational achievements and other approved benchmarks",
-    question_id = "before_june_11_q2_mandate_result"
-  ),
-  list(
-    question = "Did the defendant or prosecutor object to the recommendations within 30 days of the report?",
-    choices = c("Yes", "No"),
-    question_id = "after_june_11_q4",
-    next_question = list(
-      "Yes" = "after_june_11_q5",
-      "No" = "after_june_11_q4_result"
-    )
-  ),
-  list(
-    result = "Recommendations MUST be implemented
-
-              IF proof that PSR was validly served
-              
-              MAYBE early termination not permitted if defendant convicted of felony or 1st or 2nd degree misdemeanor while on probation or incarcerated on underlying offense
-              Court must notify defendant, prosecutor, and registered victim",
-    question_id = "after_june_11_q4_result"
-  ),
-  list(
-    question = "Court must hold PRC. Court must notify defendant registered victim and prosecutor of date of PRC",
-    question_id = "after_june_11_q5",
-    next_question = "after_june_11_q6"
-  ),
-  list(
-    question = "Did any of the following occur: 
-    
-                1) Defendant convicted of felony or 1st or 2nd degree misdemeanor while in probation or in custody for underlying offense
-                2) Court finds clear and convincing evidence defendant committed technical offense in the 6 months prior to PRC with identifiable threat to public safety
-                3) Court finds preponderance of the evidence that in the 6 months prior to PRC defendant committed a technical offense in one of these categories:
-                    - “Sexual in nature”
-                    - “Assaultive behavior” or “credible threat to cause bodily injury to another”
-                    - Possession or control of firearm or dangerous weapon
-                    - Manufacture, sale, delivery, or possession with intent to sell drugs
-                    - Absconded
-                    - Unexcused and intentional failure to programming or conditions 3+ separate occasions",
-    choices = c("Yes", "No"),
-    question_id = "after_june_11_q6",
-    next_question = list(
-      "Yes" = "after_june_11_q6_result",
-      "No" = "after_june_11_q7"
-    )
-  ),
-  list(
-    result = "NOT eligible for early termination
-
-              BUT eligible for changed conditions
-              
-              AND court must provide reasons for denial in writing
-              
-              AND defendant must be given a new PRC within 6 months of the date of the violation UNLESS the basis of the prohibition was a conviction",
-    question_id = "after_june_11_q6_result"
-  ),
-  list(
-    question = "Did a court find any of the following: 
-    
-                1) Clear and convincing evidence of identifiable threat to public safety
-                2) Preponderance of evidence that has not completed program
-                3) Preponderance of evidence that has not paid restitution",
-    choices = c("Yes", "No"),
-    question_id = "after_june_11_q7",
-    next_question = list(
-      "Yes" = "after_june_11_q8",
-      "No" = "after_june_11_q7_result"
-    )
-  ),
-  list(
-    result = "Court MUST grant early termination regardless of any recommendation",
-    question_id = "after_june_11_q7_result"
-  ),
-  list(
-    question = "NOT eligible for MANDATORY early termination
-    
-                BUT judge still has discretion to grant it, or change conditions
-                
-                AND court must provide reasons for denial in writing
-                
-                AND probationer is eligible for a PRC within 1 year of PRC date",
-    question_id = "after_june_11_q8",
-    next_question = "after_june_11_q9"
-  ),
-  list(
-    question = "Was early termination denied solely because of a failure to pay restitution
-
-                AND
-                
-                Did defendant pay at least 50% of restitution OR did they make a good faith effort to pay?",
-    choices = c("Yes", "No"),
-    question_id = "after_june_11_q9",
-    next_question = list(
-      "Yes" = "admin_probation_result",
-      "No" = "early_termination_denied_result"
-    )
-  ),
-  list(
-    result = "Defendant must be placed on administrative probation",
-    question_id = "admin_probation_result"
-  ),
-  list(
-    result = "NOT eligible for MANDATORY early termination
-    
-              BUT judge still has discretion to grant it, or change conditions
-              
-              AND court must provide reasons for denial in writing
-              
-              AND probationer is eligible for a PRC within 1 year of PRC date",
-    question_id = "early_termination_denied_result"
   ),
   list(result = 
          tags$div(
@@ -320,15 +475,15 @@ ui <- fluidPage(
   tags$head(
     tags$style(HTML(
       "
-      .question-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-      .result-text { font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
-      .shiny-input-container { margin-bottom: 10px; }
-      .btn-container { margin-top: 20px; }
-      .logo-container { text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
-      .logo { max-width: 200px; height: auto; }
+      .question-text{ font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+      .result-text{ font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
+      .shiny-input-container{ margin-bottom: 10px; }
+      .btn-container{ margin-top: 20px; }
+      .logo-container{ text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
+      .logo{ max-width: 200px; height: auto; }
 
       /* Custom button styling */
-      #violation-buttons .btn {
+      #violation-buttons .btn{
         margin-right: 10px;
         margin-bottom: 10px; /* Add bottom margin for spacing */
         border: 1px solid #ccc;
@@ -338,17 +493,17 @@ ui <- fluidPage(
         text-align: center;
       }
 
-      #violation-buttons .btn.active {
+      #violation-buttons .btn.active{
         border-color: #007bff;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
       }
 
-      #violation-buttons .btn-danger {
+      #violation-buttons .btn-danger{
         background-color: #dc3545;
         color: white;
       }
 
-      #violation-buttons .btn-success {
+      #violation-buttons .btn-success{
         background-color: #28a745;
         color: white;
       }
@@ -368,21 +523,32 @@ ui <- fluidPage(
 )
 
 ##Server
-server <- function(input, output, session) {
+server <- function(input, output, session){
   history <- reactiveVal(c(1))  
   sentencing_date <- reactiveVal(NULL)
+  sentencing_length_month <- reactiveVal(NULL)
+  sentencing_length_year <- reactiveVal(NULL)
   selected_answer <- reactiveVal(NULL)
   felony_or_misdemeanor <- reactiveVal(NULL)
-  eligibility_date <- reactiveVal(NULL)
+  multiple_misdemeanors <- reactiveVal("N/A")
+  education_credits_answer <- reactiveVal(NULL)
+  education_credits_more_than_2_answer <- reactiveVal("N/A")
+  probation_after_parole_answer <- reactiveVal("N/A")
+  final_year_of_parole_answer <- reactiveVal("N/A")
+  eligibility_date_section_7 <- reactiveVal(NULL)
+  eligibility_date_prc <- reactiveVal(NULL)
   
   violation_answer <- reactiveVal(NULL)
+  threat_to_safety_answer <- reactiveVal(NULL)
+  same_conduct_answer <- reactiveVal("N/A")
+  technical_violation_found_answer <- reactiveVal(NULL)
   
   ##Reactive function to calculate eligibility_date
-  calculate_eligibility_date <- reactive({
-    if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())) {
+  calculate_eligibility_date_section_7 <- reactive({
+    if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())){
       base_date <- as.Date(sentencing_date())
       felony_val <- felony_or_misdemeanor()
-      if(felony_val == "Felony") {
+      if(felony_val == "Felony"){
         potential_date <- base_date + years(4)
       }else if(felony_val == "Misdemeanor"){
         potential_date <- base_date + years(2)
@@ -394,13 +560,64 @@ server <- function(input, output, session) {
     }
   })
   
-  observe({
-    eligibility_date(calculate_eligibility_date())
+  calculate_eligibility_date_prc <- reactive({
+    print("--- calculate_eligibility_date_prc() called ---")  # Debugging start
+    print(paste("sentencing_date():", sentencing_date()))
+    print(paste("felony_or_misdemeanor():", felony_or_misdemeanor()))
+    print(paste("sentencing_length_year():", sentencing_length_year()))
+    print(paste("sentencing_length_month():", sentencing_length_month()))
+    print(paste("education_credits_answer():", education_credits_answer()))
+    print(paste("education_credits_more_than_2_answer():", education_credits_more_than_2_answer()))
+    print(paste("same_conduct_answer():", same_conduct_answer()))
+    print(paste("multiple_misdemeanors():", multiple_misdemeanors()))
+    print(paste("probation_after_parole_answer():", probation_after_parole_answer()))
+    print(paste("final_year_of_parole_answer():", final_year_of_parole_answer()))
+    
+    req(sentencing_date(), felony_or_misdemeanor(), sentencing_length_year(),
+        sentencing_length_month(), education_credits_answer())
+    
+    base_date <- as.Date(sentencing_date())
+    felony_val <- felony_or_misdemeanor()
+    sentencing_length_year_val <- as.numeric(sentencing_length_year())
+    sentencing_length_month_val <- as.numeric(sentencing_length_month())
+    education_credits_val <- education_credits_answer()
+    
+    misdemeanor_potential_date <- base_date + years(2)
+    felony_potential_date <- base_date + years(4)
+    one_year_after_sentence_date <- base_date + years(1)
+    sentencing_length_val <- as.numeric(sentencing_length_month_val + (12 * sentencing_length_year_val))
+    
+    if(sentencing_length_val %% 2 == 1){
+      half_sentence <- base_date + months((sentencing_length_val - 1) / 2) + days(15)
+    }else{
+      half_sentence <- base_date + months(sentencing_length_val / 2) 
+    }
+    
+    if(felony_val == "Misdemeanor" & (multiple_misdemeanors_val == "No" | (same_conduct_val == "Different Conduct" & multiple_misdemeanors_val == "Yes"))){
+      eligibility_date_val <- as.Date(min(c(misdemeanor_potential_date, half_sentence)))
+      if(education_credits_val == "Yes"){
+        eligibility_date_val = eligibility_date_val - months(6)
+      }
+    }else if(felony_val == "Felony" | (felony_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct")){
+      eligibility_date_val <- as.Date(min(c(felony_potential_date, half_sentence)))
+      if(education_credits_val == "Yes"){
+        eligibility_date_val = eligibility_date_val - months(6)
+        if(education_credits_more_than_2_val == "Yes"){
+          eligibility_date_val = eligibility_date_val - months(6)
+        }
+      }
+      if(probation_after_parole_val == "Yes" & final_year_of_parole_val == "Yes"){
+        eligibility_date_val = eligibility_date_val - months(12)
+      }
+    }
+    
+    eligibility_date_final = as.Date(max(c(eligibility_date_val, one_year_after_sentence_date)))
+    return(eligibility_date_final)
   })
   
   ##Eligibility Date Rendering Function
-  render_before_june_11_q3 <- reactive({
-    eligibility_date_val <- eligibility_date()
+  render_section_7_q3 <- reactive({
+    eligibility_date_val <- eligibility_date_section_7()
     question_content <- tags$div(
       tags$p(HTML(paste0(
         "Now we need to ask you about the probationer's behavior in the following dates: ",
@@ -421,19 +638,19 @@ server <- function(input, output, session) {
       tags$p("If the judge finds that a violation has occurred, the next steps will be as follows:"),
       tags$p("If the judge finds no technical violations, the next steps are here:")
     )
-    if(!is.null(eligibility_date_val)) {
+    if(!is.null(eligibility_date_val)){
       tagList(
         question_content,
         fluidRow(
           column(width = 12, 
                  div(
                    id = "violation-buttons", 
-                   actionButton("violation_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1], class = "btn btn-danger"),
-                   actionButton("violation_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2], class = "btn btn-success")
+                   actionButton("violation_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[1], class = "btn btn-danger"),
+                   actionButton("violation_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[2], class = "btn btn-success")
                  ),
                  tags$script(HTML(
                    "
-                 $(document).on('click', '#violation-buttons .btn', function() {
+                 $(document).on('click', '#violation-buttons .btn', function(){
                    $('#violation-buttons .btn').removeClass('active');
                    $(this).addClass('active');
                  });
@@ -442,13 +659,13 @@ server <- function(input, output, session) {
           )
         )
       )
-    }else {
+    }else{
       tags$p("Calculating eligibility date...")
     }
   })
   
   render_section_7_act_44_relief_result <- reactive({
-    eligibility_date_val <- eligibility_date()
+    eligibility_date_val <- eligibility_date_section_7()
     eligibility_date_val_clean <- format_pretty_date(eligibility_date_val)
     
     question_content <-
@@ -457,7 +674,7 @@ server <- function(input, output, session) {
         tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
       )
     
-    if (!is.null(eligibility_date_val)) {
+    if(!is.null(eligibility_date_val)){
       tagList(
         question_content, 
         fluidRow(
@@ -469,9 +686,154 @@ server <- function(input, output, session) {
           )
         )
       )
-    } else {
+    }else{
       tags$p("Calculating eligibility date...")
     }
+  })
+  
+  render_prc_flow_q7 <- reactive({
+    eligibility_date_val <- eligibility_date_prc()
+    
+    question_content <- 
+      tags$div(
+        tags$p(HTML(paste0("On or before ", "<strong>", format_pretty_date(as.Date(eligibility_date_val) - days(30)), "</strong>", 
+                           ", your probation officer must  serve you with a document known as a Probation Status Report. They must also serve it on your prosecutor, court, your lawyer, and any registered victim. This document is ", 
+                           "<u>", "critically important", "</u>", " for you to review carefully."))),
+        tags$p("This document must contain the following information"),
+        tags$ul(
+          tags$li("The date they believe you are eligible for a conference on early termination or changing probation conditions"),
+          tags$li("Any technical violations they think you have committed within the past 6 months"),
+          tags$li("Any criminal convictions you have had while on probation or in custody on uderlying case"),
+          tags$li("Any programs you have completed while on probation"),
+          tags$li("Your restitution payments, if you have any"),
+          tags$li("A general description of your progress on probation")
+        ),
+        tags$p("Most importantly, your probation office must make a recommendation that your probation be terminated, your conditions modified, or that you continue under your current conditions. This is critically important for reasons explained on the next screen."),
+        tags$p(HTML(paste0("If you did not receive this report by ", 
+                           "<strong>", format_pretty_date(as.Date(eligibility_date_val) - days(30)), "</strong>", 
+                           ", you should contact your attorney as soon as possible. It is critically important to review this document, for reasons we will explain next.")))
+      )
+    
+    if(!is.null(eligibility_date_val)){
+      tagList(
+        question_content, 
+        fluidRow(
+          column(
+            width = 12,
+            div(
+              class = "btn-container", 
+            )
+          )
+        )
+      )
+    }else{
+      tags$p("Calculating eligibility date...")
+    }
+  })
+  
+  render_prc_flow_q9 <- reactive({
+    eligibility_date_val <- eligibility_date_prc()
+    
+    question_content <- 
+      tags$div(
+        tags$p(HTML(paste0("Your Probation Review Conference must be held by ", 
+                           "<strong>", format_pretty_date(as.Date(eligibility_date_val) + days(60)), "</strong>",
+                           ". If you do not receive your hearing by this date, you have the right to petition the court to hold this hearing within 5 days."))),
+        tags$p("During the Conference, the judge will review your behavior and record while on probation. In some cases, good behavior may lead to mandatory termination of probation. In other cases, certain types of poor behavior such as a new conviction while on probation makes early termination impossible. This tool is designed to help you understand exactly what will happen Probation Review Conference, and exactly what a judge is required to consider and decide. The tool will pose a series of questions that a judge will need to answer and then tell you the outcome of your case based on what the judge decides. Of course, this tool cannot predict exactly what a judge will decide, but it will tell you what the outcome must be after a judge makes their decision."),
+        tags$p("First, a judge will look at your criminal record while you were on probation or while you were in custody for that case. Were you convicted of a felony or a first or second degree misdemeanor during this time?")
+      )
+    
+    if(!is.null(eligibility_date_val)){
+      tagList(
+        question_content, 
+        fluidRow(
+          column(
+            width = 12,
+            div(
+              class = "btn-container", 
+            )
+          )
+        ),
+        radioButtons("answer", NULL, selected = character(0), choices = c("Yes", "No"))
+      )
+    }else{
+      tags$p("Calculating eligibility date...")
+    }
+  })
+  
+  render_prc_flow_q10 <- reactive({
+    question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$question
+    
+    tagList(
+      question_content,
+      fluidRow(
+        column(width = 12, 
+               div(
+                 id = "threat_to_safety_answer-buttons", 
+                 actionButton("threat_to_safety_answer_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[1], class = "btn btn-danger"),
+                 actionButton("threat_to_safety_answer_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[2], class = "btn btn-success")
+               ),
+               tags$script(HTML(
+                 "
+                 $(document).on('click', '#threat_to_safety_answer-buttons .btn', function(){
+                   $('#threat_to_safety_answer-buttons .btn').removeClass('active');
+                   $(this).addClass('active');
+                 });
+                 "
+               ))
+        )
+      )
+    )
+  })
+  
+  render_prc_flow_q3_3 <- reactive({
+    question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$question
+    
+    tagList(
+      question_content,
+      fluidRow(
+        column(width = 12, 
+               div(
+                 id = "same_conduct_answer-buttons", 
+                 actionButton("same_conduct_answer_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[1], class = "btn btn-danger"),
+                 actionButton("same_conduct_answer_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[2], class = "btn btn-success")
+               ),
+               tags$script(HTML(
+                 "
+                 $(document).on('click', '#same_conduct_answer-buttons .btn', function(){
+                   $('#same_conduct_answer-buttons .btn').removeClass('active');
+                   $(this).addClass('active');
+                 });
+                 "
+               ))
+        )
+      )
+    )
+  })
+  
+  render_prc_flow_q11 <- reactive({
+    question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$question
+    
+    tagList(
+      question_content,
+      fluidRow(
+        column(width = 12, 
+               div(
+                 id = "technical_violation_found-buttons", 
+                 actionButton("technical_violation_found_yes", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[1], class = "btn btn-danger"),
+                 actionButton("technical_violation_found_no", decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[2], class = "btn btn-success")
+               ),
+               tags$script(HTML(
+                 "
+                 $(document).on('click', '#technical_violation_found-buttons .btn', function(){
+                   $('#technical_violation_found-buttons .btn').removeClass('active');
+                   $(this).addClass('active');
+                 });
+                 "
+               ))
+        )
+      )
+    )
   })
   
   output$quiz_ui <- renderUI({
@@ -484,11 +846,23 @@ server <- function(input, output, session) {
         uiOutput("intro_buttons"),
         current_question$content_below_buttons
       )
-    }else if("question" %in% names(current_question) & length(current_question$question_list) == 0) {
+    }else if(current_question$question_id == "section_7_q3"){
+      render_section_7_q3()
+    }else if(current_question$question_id == "prc_flow_q7"){
+      render_prc_flow_q7()
+    }else if(current_question$question_id == "prc_flow_q9"){
+      render_prc_flow_q9()
+    }else if(current_question$question_id == "prc_flow_q10"){
+      render_prc_flow_q10()
+    }else if(current_question$question_id == "prc_flow_q3_3"){
+      render_prc_flow_q3_3()
+    }else if(current_question$question_id == "prc_flow_q11"){
+      render_prc_flow_q11()
+    }else if("question" %in% names(current_question) & length(current_question$question_list) == 0){
       tagList(
         div(class = "question-text", current_question$question),
-        if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0) {
-          radioButtons("answer", NULL, choices = current_question$choices)
+        if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0){
+          radioButtons("answer", NULL, selected = character(0), choices = current_question$choices)
         }else if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) > 0){
           dateInput(
             inputId = "answer",
@@ -501,10 +875,25 @@ server <- function(input, output, session) {
             weekstart = 0,           
             language = "en"          
           )
+        }else if(length(current_question$drop_down) > 0){
+          dropdownButton(
+            label = "Select Duration",
+            status = "primary",
+            icon = icon("sliders-h"),
+            circle = FALSE,
+            
+            # Custom UI inside dropdown
+            fluidRow(
+              column(6,
+                     selectInput("answer_years", "Years:", choices = 0:100, selected = 0)
+              ),
+              column(6,
+                     selectInput("answer_months", "Months:", choices = 0:11, selected = 0)
+              )
+            )
+          )
         }
       )
-    }else if(current_question$question_id == "before_june_11_q3") {
-      render_before_june_11_q3()
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
         div(class = "question-text", current_question$question),
@@ -517,14 +906,14 @@ server <- function(input, output, session) {
               div(class = "question-text", tags$div(tags$p(HTML(.y)))),
               radioButtons(
                 inputId = paste0("answer_", .x), 
+                selected = character(0),
                 label = NULL,
                 choices = current_question$choices
               )
             )
           )
       )
-    }
-    else if("result" %in% names(current_question)) {
+    }else if("result" %in% names(current_question)){
       if(current_question$question_id == "section_7_act_44_relief_result"){
         render_section_7_act_44_relief_result()
       }else{
@@ -545,11 +934,11 @@ server <- function(input, output, session) {
     current_question <- decision_tree[[current_index]]
     buttons <- list()
     
-    if(length(history()) > 1) {
+    if(length(history()) > 1){
       buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
     }
     
-    if("result" %in% names(current_question)) {
+    if("result" %in% names(current_question)){
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
     }else if(length(current_question$intro) == 0){
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
@@ -567,21 +956,47 @@ server <- function(input, output, session) {
         sentencing_date(as.Date(input$answer))
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
       }
-    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0){
-      if(current_question$question_id == "before_june_11_q2"){
+    }else if(length(current_question$question_list) == 0 & length(current_question$question_list) == 0){
+      if(current_question$question_id %in% c("section_7_q2", "prc_flow_q2")){
         ifelse(input$answer == "Yes", felony_or_misdemeanor("Felony"), felony_or_misdemeanor("Misdemeanor"))
+      }else if(current_question$question_id == "prc_flow_q3_2"){
+        ifelse(input$answer == "Yes", multiple_misdemeanors("Yes"), multiple_misdemeanors("No"))
+      }else if(current_question$question_id == "prc_flow_q5"){
+        ifelse(input$answer == "Yes", education_credits_answer("Yes"), education_credits_answer("No"))
+      }else if(current_question$question_id == "prc_flow_q6"){
+        ifelse(input$answer == "Yes", education_credits_more_than_2_answer("Yes"), education_credits_more_than_2_answer("No"))
+      }else if(current_question$question_id == "prc_flow_q3_1"){
+        ifelse(input$answer == "Yes", probation_after_parole_answer("Yes"), probation_after_parole_answer("No"))
+      }else if(current_question$question_id == "prc_flow_q3_1_final_year_parole"){
+        ifelse(input$answer == "Yes", final_year_of_parole_answer("Yes"), final_year_of_parole_answer("No"))
       }
       selected_answer(input$answer)
     }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
       responses <- sapply(answer_ids, function(id) input[[id]])  
-      if("Yes" %in% responses) {
+      if("Yes" %in% responses){
         selected_answer("Yes")
       }else{
         selected_answer("No")
       }
     }
+  })
+  
+  observe({
+    eligibility_date_prc(calculate_eligibility_date_prc())
+  })
+  
+  observe({
+    eligibility_date_section_7(calculate_eligibility_date_section_7())
+  })
+  
+  observeEvent(input$answer_years, {
+    sentencing_length_year(as.numeric(input$answer_years))
+  })
+  
+  observeEvent(input$answer_months, {
+    sentencing_length_month(as.numeric(input$answer_months))
   })
   
   observeEvent(input$start_button, {
@@ -595,17 +1010,34 @@ server <- function(input, output, session) {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     
-    if("choices" %in% names(current_question)) {
-      if(length(current_question$question_list) == 0) {
-        if (current_question$question_id == "before_june_11_q3") {
+    if("choices" %in% names(current_question)){
+      if(length(current_question$question_list) == 0){
+        if(current_question$question_id == "section_7_q3"){
           next_id <- current_question$next_question[[violation_answer()]]
-        } else {
+        }else if(current_question$question_id == "prc_flow_q10"){
+          next_id <- current_question$next_question[[threat_to_safety_answer()]]
+        }else if(current_question$question_id == "prc_flow_q3_3"){
+          next_id <- current_question$next_question[[same_conduct_answer()]]
+        }else if(current_question$question_id == "prc_flow_q11"){
+          next_id <- current_question$next_question[[technical_violation_found_answer()]]
+        }else if(current_question$question_id == "prc_flow_q5"){
+          education_credits_val <- education_credits_answer()
+          felony_or_misdemeanor_val <- felony_or_misdemeanor()
+          multiple_misdemeanors_val <- multiple_misdemeanors()
+          same_conduct_val <- same_conduct_answer()
+          if((felony_or_misdemeanor_val == "Felony" & education_credits_val == "Yes") | 
+             (felony_or_misdemeanor_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct" & education_credits_val == "Yes")){
+            next_id <- current_question$next_question[["Yes"]]
+          }else{
+            next_id <- current_question$next_question[["No"]]
+          }
+        }else{
           next_id <- current_question$next_question[[selected_answer()]]
         }
       }else{
         answer_ids <- names(input)[grepl("^answer_q", names(input))]
         responses <- sapply(answer_ids, function(id) input[[id]])
-        if(any(responses == "Yes")) {
+        if(any(responses == "Yes")){
           next_id <- current_question$next_question[["Yes"]]
         }else{
           next_id <- current_question$next_question[["No"]]
@@ -620,17 +1052,47 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$violation_yes, {
-    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[1])
+    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[1])
     shinyjs::click("next_button")
   })
   
   observeEvent(input$violation_no, {
-    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "before_june_11_q3")]]$choices[2])
+    violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[2])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$threat_to_safety_answer_yes, {
+    threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[1])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$threat_to_safety_answer_no, {
+    threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[2])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$same_conduct_answer_yes, {
+    same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[1])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$same_conduct_answer_no, {
+    same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[2])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$technical_violation_found_yes, {
+    technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[1])
+    shinyjs::click("next_button")
+  })
+  
+  observeEvent(input$technical_violation_found_no, {
+    technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[2])
     shinyjs::click("next_button")
   })
   
   observeEvent(input$back_button, {
-    if(length(history()) > 1) {
+    if(length(history()) > 1){
       history(history()[1:(length(history()) - 1)])
     }
   })
