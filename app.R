@@ -91,7 +91,7 @@ decision_tree <- list(
                               "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=14&subsctn=0' target='_blank'>Crime of Violence</a>"))),
           tags$li(HTML(paste0("A crime related to sex offender registration (defined either ", 
                               "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=91&subsctn=0' target='_blank'>here</a>", 
-                              "or", 
+                              " or ", 
                               "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=99&subsctn=51' target='_blank'>here</a>)"))),
           tags$li(HTML(paste0("A crime of ", 
                               "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank'>homicide</a>)", 
@@ -471,6 +471,7 @@ decision_tree <- list(
 
 ####Create App####
 ui <- fluidPage(
+  shinyjs::useShinyjs(),
   theme = shinytheme("flatly"),  
   tags$head(
     tags$style(HTML(
@@ -574,6 +575,12 @@ server <- function(input, output, session){
     felony_potential_date <- base_date + years(4)
     one_year_after_sentence_date <- base_date + years(1)
     sentencing_length_val <- as.numeric(sentencing_length_month_val + (12 * sentencing_length_year_val))
+    
+    multiple_misdemeanors_val <- multiple_misdemeanors()
+    same_conduct_val <- same_conduct_answer()
+    education_credits_more_than_2_val <- education_credits_more_than_2_answer()
+    probation_after_parole_val <- probation_after_parole_answer()
+    final_year_of_parole_val <- final_year_of_parole_answer()
     
     if(sentencing_length_val %% 2 == 1){
       half_sentence <- base_date + months((sentencing_length_val - 1) / 2) + days(15)
