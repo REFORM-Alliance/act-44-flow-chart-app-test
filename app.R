@@ -10,6 +10,7 @@ library(shinyWidgets)
 library(lubridate)
 library(scales)
 library(shinyjs)
+library(shinyalert)
 
 
 ####Helper Functions####
@@ -471,7 +472,8 @@ decision_tree <- list(
 
 ####Create App####
 ui <- fluidPage(
-  shinyjs::useShinyjs(),
+  useShinyjs(),
+  # useShinyalert(),
   theme = shinytheme("flatly"),  
   tags$head(
     tags$style(HTML(
@@ -518,7 +520,6 @@ ui <- fluidPage(
   
   titlePanel(strong("Act 44 Early Termination Tool")),
   uiOutput("quiz_ui"),
-  uiOutput("warning_ui"),
   div(class = "btn-container",
       uiOutput("button_ui")
   )
@@ -545,6 +546,7 @@ server <- function(input, output, session){
   same_conduct_answer <- reactiveVal("N/A")
   technical_violation_found_answer <- reactiveVal(NULL)
   answer_selected <- reactiveVal(FALSE)
+  
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
     if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())){
@@ -920,30 +922,17 @@ server <- function(input, output, session){
       }else{
         div(class = "question-text", current_question$result)
       }
-      
     }
   })
   
   output$warning_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
+    answer_selected_val = answer_selected()
     
-    if ("choices" %in% names(current_question) &&
-        length(current_question$question_list) == 0 &&
-        is.null(selected_answer()) &&
-        length(current_question$date_question) == 0 &&
-        length(current_question$drop_down) == 0 &&
-        answer_selected()) { # Only show warning if user has interacted
+    if(answer_selected_val == FALSE){
       tags$p("Please select an answer", class = "warning-message")
-    } else if ("question_list" %in% names(current_question) &&
-               length(current_question$question_list) > 0 &&
-               any(sapply(names(input)[grepl("^answer_q", names(input))], function(id) is.null(input[[id]])))) {
-      tags$p("Please select an answer for each question", class = "warning-message")
-    } else if (length(current_question$date_question) > 0 && is.null(sentencing_date())) {
-      tags$p("Please select a date", class = "warning-message")
-    } else if (length(current_question$drop_down) > 0 && (is.null(sentencing_length_year()) || is.null(sentencing_length_month()))) {
-      tags$p("Please select the sentence duration", class = "warning-message")
-    } else {
+    }else {
       ""
     }
   })
@@ -954,58 +943,21 @@ server <- function(input, output, session){
     )
   })
   
-  # output$button_ui <- renderUI({
-  #   current_index <- tail(history(), 1)
-  #   current_question <- decision_tree[[current_index]]
-  #   buttons <- list()
-  #   
-  #   if(length(history()) > 1){
-  #     buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
-  #   }
-  #   
-  #   if("result" %in% names(current_question)){
-  #     buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-  #   }else if(length(current_question$intro) == 0){
-  #     buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
-  #   }
-  #   
-  #   do.call(fluidRow, buttons)
-  # })
-  
   output$button_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     buttons <- list()
-    
+
     if(length(history()) > 1){
       buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
     }
-    
-    next_button <- actionButton("next_button", "Next", class = "btn btn-primary")
-    
-    # Conditionally disable the next button
-    if("choices" %in% names(current_question) &&
-        length(current_question$question_list) == 0 &&
-        is.null(selected_answer()) &&
-        length(current_question$date_question) == 0 &&
-        length(current_question$drop_down) == 0) {
-      next_button <- shinyjs::disabled(next_button)
-    }else if("question_list" %in% names(current_question) &&
-               length(current_question$question_list) > 0 &&
-               any(sapply(names(input)[grepl("^answer_q", names(input))], function(id) is.null(input[[id]])))) {
-      next_button <- shinyjs::disabled(next_button)
-    }else if(length(current_question$date_question) > 0 && is.null(sentencing_date())) {
-      next_button <- shinyjs::disabled(next_button)
-    }else if(length(current_question$drop_down) > 0 && (is.null(sentencing_length_year()) || is.null(sentencing_length_month()))) {
-      next_button <- shinyjs::disabled(next_button)
-    }
-    
+
     if("result" %in% names(current_question)){
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    }else if(length(current_question$intro) == 0) {
-      buttons <- append(buttons, list(next_button))
+    }else if(length(current_question$intro) == 0){
+      buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
-    
+
     do.call(fluidRow, buttons)
   })
   
@@ -1017,6 +969,7 @@ server <- function(input, output, session){
       if(current_question$question_id == "defendant_sentencing_date"){
         sentencing_date(as.Date(input$answer))
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
+        answer_selected(TRUE)
       }
     }else if(length(current_question$question_list) == 0 & length(current_question$question_list) == 0){
       if(current_question$question_id %in% c("section_7_q2", "prc_flow_q2")){
@@ -1032,15 +985,26 @@ server <- function(input, output, session){
       }else if(current_question$question_id == "prc_flow_q3_1_final_year_parole"){
         ifelse(input$answer == "Yes", final_year_of_parole_answer("Yes"), final_year_of_parole_answer("No"))
       }
+      ifelse(is.null(input$answer) == FALSE, answer_selected(TRUE), answer_selected(FALSE))
       selected_answer(input$answer)
     }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
       responses <- sapply(answer_ids, function(id) input[[id]])  
-      if("Yes" %in% responses){
-        selected_answer("Yes")
+      if(any(is.na(responses)) == TRUE){
+        answer_selected(FALSE)
       }else{
-        selected_answer("No")
+        answer_selected(TRUE)
+      }
+      
+      answer_selected_val = answer_selected()
+      
+      if(answer_selected_val == TRUE){
+        if("Yes" %in% responses){
+          selected_answer("Yes")
+        }else{
+          selected_answer("No")
+        }
       }
     }
   })
@@ -1051,6 +1015,19 @@ server <- function(input, output, session){
   
   observe({
     eligibility_date_section_7(calculate_eligibility_date_section_7())
+  })
+  
+  observe({
+    answer_selected_val = answer_selected()
+    if(!is.null(answer_selected_val) & answer_selected_val == TRUE) {
+      shinyjs::enable("next_button")
+    }else{
+      shinyjs::disable("next_button")
+    }
+  })
+  
+  observe({
+    answer_selected_val = answer_selected()
   })
   
   observeEvent(input$answer_years, {
@@ -1071,6 +1048,16 @@ server <- function(input, output, session){
   observeEvent(input$next_button, {
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
+    answer_selected_val <- answer_selected()
+    
+    if(answer_selected_val == FALSE){
+      shinyalert(
+        title = "Missing answer",
+        text = "Please select an answer before clicking Next",
+        type = "warning"
+      )
+      return()
+    }
     
     if("choices" %in% names(current_question)){
       
@@ -1109,6 +1096,8 @@ server <- function(input, output, session){
     
     next_index <- which(map_chr(decision_tree, "question_id") == next_id)
     history(c(history(), next_index))
+    answer_selected(FALSE)
+    selected_answer(NULL)
   })
   
   observeEvent(input$violation_yes, {
