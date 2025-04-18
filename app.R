@@ -508,6 +508,13 @@ ui <- fluidPage(
         background-color: #28a745;
         color: white;
       }
+      
+      /* Added CSS for warning message */
+      .warning-message {
+          color: red;
+          font-size: 16px;
+          margin-top: 10px;
+      }
       "
     ))
   ),
@@ -518,6 +525,7 @@ ui <- fluidPage(
   
   titlePanel(strong("Act 44 Early Termination Tool")),
   uiOutput("quiz_ui"),
+  uiOutput("warning_ui"),
   div(class = "btn-container",
       uiOutput("button_ui")
   )
@@ -543,7 +551,7 @@ server <- function(input, output, session){
   threat_to_safety_answer <- reactiveVal(NULL)
   same_conduct_answer <- reactiveVal("N/A")
   technical_violation_found_answer <- reactiveVal(NULL)
-  
+  answer_selected <- reactiveVal(FALSE)
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
     if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())){
@@ -593,7 +601,7 @@ server <- function(input, output, session){
       if(education_credits_val == "Yes"){
         eligibility_date_val = eligibility_date_val - months(6)
       }
-    }else if(felony_val == "Felony" | (felony_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct")){
+    }else if(felony_val == "Felony"){
       eligibility_date_val <- as.Date(min(c(felony_potential_date, half_sentence)))
       if(education_credits_val == "Yes"){
         eligibility_date_val = eligibility_date_val - months(6)
@@ -604,6 +612,8 @@ server <- function(input, output, session){
       if(probation_after_parole_val == "Yes" & final_year_of_parole_val == "Yes"){
         eligibility_date_val = eligibility_date_val - months(12)
       }
+    }else if(felony_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct"){
+      eligibility_date_val <- as.Date(min(c(felony_potential_date, half_sentence)))
     }
     
     eligibility_date_final = as.Date(max(c(eligibility_date_val, one_year_after_sentence_date)))
@@ -918,11 +928,53 @@ server <- function(input, output, session){
     }
   })
   
+  output$warning_ui <- renderUI({
+    current_index <- tail(history(), 1)
+    current_question <- decision_tree[[current_index]]
+    
+    if ("choices" %in% names(current_question) &&
+        length(current_question$question_list) == 0 &&
+        is.null(selected_answer()) &&
+        length(current_question$date_question) == 0 &&
+        length(current_question$drop_down) == 0 &&
+        answer_selected()) { # Only show warning if user has interacted
+      tags$p("Please select an answer", class = "warning-message")
+    } else if ("question_list" %in% names(current_question) &&
+               length(current_question$question_list) > 0 &&
+               any(sapply(names(input)[grepl("^answer_q", names(input))], function(id) is.null(input[[id]])))) {
+      tags$p("Please select an answer for each question", class = "warning-message")
+    } else if (length(current_question$date_question) > 0 && is.null(sentencing_date())) {
+      tags$p("Please select a date", class = "warning-message")
+    } else if (length(current_question$drop_down) > 0 && (is.null(sentencing_length_year()) || is.null(sentencing_length_month()))) {
+      tags$p("Please select the sentence duration", class = "warning-message")
+    } else {
+      ""
+    }
+  })
+  
   output$intro_buttons <- renderUI({
     div(
       actionButton("start_button", "Start", class = "btn btn-success")
     )
   })
+  
+  # output$button_ui <- renderUI({
+  #   current_index <- tail(history(), 1)
+  #   current_question <- decision_tree[[current_index]]
+  #   buttons <- list()
+  #   
+  #   if(length(history()) > 1){
+  #     buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
+  #   }
+  #   
+  #   if("result" %in% names(current_question)){
+  #     buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
+  #   }else if(length(current_question$intro) == 0){
+  #     buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
+  #   }
+  #   
+  #   do.call(fluidRow, buttons)
+  # })
   
   output$button_ui <- renderUI({
     current_index <- tail(history(), 1)
@@ -933,14 +985,70 @@ server <- function(input, output, session){
       buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
     }
     
+    next_button <- actionButton("next_button", "Next", class = "btn btn-primary")
+    
+    # Conditionally disable the next button
+    if ("choices" %in% names(current_question) &&
+        length(current_question$question_list) == 0 &&
+        is.null(selected_answer()) &&
+        length(current_question$date_question) == 0 &&
+        length(current_question$drop_down) == 0) {
+      next_button <- shinyjs::disabled(next_button)
+    } else if ("question_list" %in% names(current_question) &&
+               length(current_question$question_list) > 0 &&
+               any(sapply(names(input)[grepl("^answer_q", names(input))], function(id) is.null(input[[id]])))) {
+      next_button <- shinyjs::disabled(next_button)
+    } else if (length(current_question$date_question) > 0 && is.null(sentencing_date())) {
+      next_button <- shinyjs::disabled(next_button)
+    } else if (length(current_question$drop_down) > 0 && (is.null(sentencing_length_year()) || is.null(sentencing_length_month()))) {
+      next_button <- shinyjs::disabled(next_button)
+    }
+    
     if("result" %in% names(current_question)){
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    }else if(length(current_question$intro) == 0){
-      buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
+    } else if (length(current_question$intro) == 0) {
+      buttons <- append(buttons, list(next_button))
     }
     
     do.call(fluidRow, buttons)
   })
+  
+  # observeEvent(input$answer, {
+  #   current_index <- tail(history(), 1)
+  #   current_question <- decision_tree[[current_index]]
+  #   
+  #   if(length(current_question$question_list) == 0 & length(current_question$date_question) > 0){
+  #     if(current_question$question_id == "defendant_sentencing_date"){
+  #       sentencing_date(as.Date(input$answer))
+  #       ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
+  #     }
+  #   }else if(length(current_question$question_list) == 0 & length(current_question$question_list) == 0){
+  #     if(current_question$question_id %in% c("section_7_q2", "prc_flow_q2")){
+  #       ifelse(input$answer == "Yes", felony_or_misdemeanor("Felony"), felony_or_misdemeanor("Misdemeanor"))
+  #     }else if(current_question$question_id == "prc_flow_q3_2"){
+  #       ifelse(input$answer == "Yes", multiple_misdemeanors("Yes"), multiple_misdemeanors("No"))
+  #     }else if(current_question$question_id == "prc_flow_q5"){
+  #       ifelse(input$answer == "Yes", education_credits_answer("Yes"), education_credits_answer("No"))
+  #     }else if(current_question$question_id == "prc_flow_q6"){
+  #       ifelse(input$answer == "Yes", education_credits_more_than_2_answer("Yes"), education_credits_more_than_2_answer("No"))
+  #     }else if(current_question$question_id == "prc_flow_q3_1"){
+  #       ifelse(input$answer == "Yes", probation_after_parole_answer("Yes"), probation_after_parole_answer("No"))
+  #     }else if(current_question$question_id == "prc_flow_q3_1_final_year_parole"){
+  #       ifelse(input$answer == "Yes", final_year_of_parole_answer("Yes"), final_year_of_parole_answer("No"))
+  #     }
+  #     selected_answer(input$answer)
+  #   }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
+  #     answer_ids <- names(input)[grepl("^answer_q", names(input))]
+  #     
+  #     responses <- sapply(answer_ids, function(id) input[[id]])  
+  #     if("Yes" %in% responses){
+  #       selected_answer("Yes")
+  #     }else{
+  #       selected_answer("No")
+  #     }
+  #   }
+  #   answer_selected(TRUE)
+  # })
   
   observeEvent(input$answer, {
     current_index <- tail(history(), 1)
@@ -965,17 +1073,20 @@ server <- function(input, output, session){
       }else if(current_question$question_id == "prc_flow_q3_1_final_year_parole"){
         ifelse(input$answer == "Yes", final_year_of_parole_answer("Yes"), final_year_of_parole_answer("No"))
       }
-      selected_answer(input$answer)
+      if (!is.null(input$answer)) { # Crucial check!
+        selected_answer(input$answer)
+      }
     }else if(length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
-      responses <- sapply(answer_ids, function(id) input[[id]])  
-      if("Yes" %in% responses){
+      responses <- sapply(answer_ids, function(id) input[[id]])
+      if(any(responses == "Yes")){
         selected_answer("Yes")
       }else{
         selected_answer("No")
       }
     }
+    answer_selected(TRUE) # Set answer_selected to TRUE
   })
   
   observe({
@@ -988,10 +1099,12 @@ server <- function(input, output, session){
   
   observeEvent(input$answer_years, {
     sentencing_length_year(as.numeric(input$answer_years))
+    answer_selected(TRUE)
   })
   
   observeEvent(input$answer_months, {
     sentencing_length_month(as.numeric(input$answer_months))
+    answer_selected(TRUE)
   })
   
   observeEvent(input$start_button, {
@@ -1020,8 +1133,7 @@ server <- function(input, output, session){
           felony_or_misdemeanor_val <- felony_or_misdemeanor()
           multiple_misdemeanors_val <- multiple_misdemeanors()
           same_conduct_val <- same_conduct_answer()
-          if((felony_or_misdemeanor_val == "Felony" & education_credits_val == "Yes") | 
-             (felony_or_misdemeanor_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct" & education_credits_val == "Yes")){
+          if((felony_or_misdemeanor_val == "Felony" & education_credits_val == "Yes")){
             next_id <- current_question$next_question[["Yes"]]
           }else{
             next_id <- current_question$next_question[["No"]]
@@ -1049,41 +1161,49 @@ server <- function(input, output, session){
   observeEvent(input$violation_yes, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[1])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$violation_no, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[2])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$threat_to_safety_answer_yes, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[1])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$threat_to_safety_answer_no, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[2])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$same_conduct_answer_yes, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[1])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$same_conduct_answer_no, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[2])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$technical_violation_found_yes, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[1])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$technical_violation_found_no, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[2])
     shinyjs::click("next_button")
+    answer_selected(TRUE)
   })
   
   observeEvent(input$back_button, {
