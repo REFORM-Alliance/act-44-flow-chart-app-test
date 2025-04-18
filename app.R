@@ -546,6 +546,8 @@ server <- function(input, output, session){
   same_conduct_answer <- reactiveVal("N/A")
   technical_violation_found_answer <- reactiveVal(NULL)
   answer_selected <- reactiveVal(FALSE)
+  answer_years_selected <- reactiveVal(FALSE)
+  answer_months_selected <- reactiveVal(FALSE)
   
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
@@ -888,10 +890,10 @@ server <- function(input, output, session){
             # Custom UI inside dropdown
             fluidRow(
               column(6,
-                     selectInput("answer_years", "Years:", choices = 0:100, selected = 0)
+                     selectInput("answer_years", "Years:", choices = 0:100, selected = character(0))
               ),
               column(6,
-                     selectInput("answer_months", "Months:", choices = 0:11, selected = 0)
+                     selectInput("answer_months", "Months:", choices = 0:11, selected = character(0))
               )
             )
           )
@@ -925,17 +927,17 @@ server <- function(input, output, session){
     }
   })
   
-  output$warning_ui <- renderUI({
-    current_index <- tail(history(), 1)
-    current_question <- decision_tree[[current_index]]
-    answer_selected_val = answer_selected()
-    
-    if(answer_selected_val == FALSE){
-      tags$p("Please select an answer", class = "warning-message")
-    }else {
-      ""
-    }
-  })
+  # output$warning_ui <- renderUI({
+  #   current_index <- tail(history(), 1)
+  #   current_question <- decision_tree[[current_index]]
+  #   answer_selected_val = answer_selected()
+  #   
+  #   if(answer_selected_val == FALSE){
+  #     tags$p("Please select an answer", class = "warning-message")
+  #   }else {
+  #     ""
+  #   }
+  # })
   
   output$intro_buttons <- renderUI({
     div(
@@ -971,7 +973,18 @@ server <- function(input, output, session){
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
         answer_selected(TRUE)
       }
-    }else if(length(current_question$question_list) == 0 & length(current_question$question_list) == 0){
+    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0 & length(current_question$drop_down) > 0){
+      answer_ids <- 
+        input %>% 
+        names() %>% 
+        str_subset("answer_years|answer_months")
+      responses <- sapply(answer_ids, function(id) input[[id]])  
+      if(any(is.na(responses)) == TRUE){
+        answer_selected(FALSE)
+      }else{
+        answer_selected(TRUE)
+      }
+    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0 & length(current_question$drop_down) == 0){
       if(current_question$question_id %in% c("section_7_q2", "prc_flow_q2")){
         ifelse(input$answer == "Yes", felony_or_misdemeanor("Felony"), felony_or_misdemeanor("Misdemeanor"))
       }else if(current_question$question_id == "prc_flow_q3_2"){
@@ -1026,16 +1039,36 @@ server <- function(input, output, session){
     }
   })
   
-  observe({
-    answer_selected_val = answer_selected()
-  })
-  
   observeEvent(input$answer_years, {
-    sentencing_length_year(as.numeric(input$answer_years))
+    answer_val <- as.numeric(input$answer_years)
+    if(!is.null(answer_val)){
+      sentencing_length_year(answer_val)
+      answer_years_selected(TRUE)
+    }
+    
   })
   
   observeEvent(input$answer_months, {
-    sentencing_length_month(as.numeric(input$answer_months))
+    answer_val <- as.numeric(input$answer_months)
+    if(!is.null(answer_val)){
+      sentencing_length_month(answer_val)
+      answer_months_selected(TRUE)
+    }
+  })
+  
+  observe({
+    current_index <- tail(history(), 1)
+    current_question <- decision_tree[[current_index]]
+    answer_years_selected_val = answer_years_selected()
+    answer_months_selected_val = answer_months_selected()
+    
+    if(current_question$question_id == "prc_flow_q4"){
+      if(answer_years_selected_val == TRUE & answer_months_selected_val == TRUE){
+        answer_selected(TRUE)
+      }else{
+        answer_selected(FALSE)
+      }
+    }
   })
   
   observeEvent(input$start_button, {
@@ -1062,15 +1095,15 @@ server <- function(input, output, session){
     if("choices" %in% names(current_question)){
       
       if(length(current_question$question_list) == 0){
-        if(current_question$question_id == "section_7_q3" & !is.null(violation_answer())){
+        if(current_question$question_id == "section_7_q3"){
           next_id <- current_question$next_question[[violation_answer()]]
-        }else if(current_question$question_id == "prc_flow_q10" & !is.null(threat_to_safety_answer())){
+        }else if(current_question$question_id == "prc_flow_q10"){
           next_id <- current_question$next_question[[threat_to_safety_answer()]]
-        }else if(current_question$question_id == "prc_flow_q3_3" & !is.null(same_conduct_answer())){
+        }else if(current_question$question_id == "prc_flow_q3_3"){
           next_id <- current_question$next_question[[same_conduct_answer()]]
-        }else if(current_question$question_id == "prc_flow_q11" & !is.null(technical_violation_found_answer())){
+        }else if(current_question$question_id == "prc_flow_q11"){
           next_id <- current_question$next_question[[technical_violation_found_answer()]]
-        }else if(current_question$question_id == "prc_flow_q5" & !is.null(education_credits_answer())){
+        }else if(current_question$question_id == "prc_flow_q5"){
           education_credits_val <- education_credits_answer()
           felony_or_misdemeanor_val <- felony_or_misdemeanor()
           if((felony_or_misdemeanor_val == "Felony" & education_credits_val == "Yes")){
