@@ -589,7 +589,7 @@ server <- function(input, output, session){
       half_sentence <- base_date + months(sentencing_length_val / 2) 
     }
     
-    if(felony_val == "Misdemeanor" & (multiple_misdemeanors_val == "No" | (same_conduct_val == "Different Conduct" & multiple_misdemeanors_val == "Yes"))){
+    if(felony_val == "Misdemeanor" & (multiple_misdemeanors_val == "No" | (same_conduct_val == "Same Conduct" & multiple_misdemeanors_val == "Yes"))){
       eligibility_date_val <- as.Date(min(c(misdemeanor_potential_date, half_sentence)))
       if(education_credits_val == "Yes"){
         eligibility_date_val = eligibility_date_val - months(6)
@@ -607,8 +607,9 @@ server <- function(input, output, session){
       }
     }else if(felony_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Different Conduct"){
       eligibility_date_val <- as.Date(min(c(felony_potential_date, half_sentence)))
-    }else if(felony_val == "Misdemeanor" & multiple_misdemeanors_val == "Yes" & same_conduct_val == "Same Conduct"){
-      eligibility_date_val = as.Date(min(c(misdemeanor_potential_date, half_sentence)))
+      if(education_credits_val == "Yes"){
+        eligibility_date_val = eligibility_date_val - months(6)
+      }
     }
     
     eligibility_date_final = as.Date(max(c(eligibility_date_val, one_year_after_sentence_date)))
