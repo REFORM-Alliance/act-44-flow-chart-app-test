@@ -233,8 +233,8 @@ decision_tree <- list(
   list(question = 
          tags$div(
            tags$p(HTML(paste0("After receiving the Probation Status Report, you and the prosecutor have 30 days to object to the findings and recommendations of your probation office. This is ", 
-                              "<u>", "extremely important", "</u>", "because if neither you nor your prosecutor object, these recommendations ", 
-                              "<u>", "must", "</u>", " be enforced. This means that if your probation office recommends early termination and your prosecutor does not object, the court must terminate your probation! But it also means that if you do not agree with your probation office’s recommendations, you should strongly consider objecting to this report, and should contact your lawyer about your options."))),
+                              "<b>", "extremely important ", "</b>", "because if neither you nor your prosecutor object, these recommendations ", 
+                              "<b>", "must", "</b>", " be enforced. This means that if your probation office recommends early termination and your prosecutor does not object, the court must terminate your probation! But it also means that if you do not agree with your probation office’s recommendations, you should strongly consider objecting to this report, and should contact your lawyer about your options."))),
            tags$p("If you or your prosecutor object to this report, the next step is a mandatory court procedure called a Probation Review Conference. What happens at a Probation Review Conference is extremely important because it may help you decide whether to object to this report or not. In some cases, a court will be required to grant you early termination at a Probation Review Conference! In other cases, a court will not be allowed to do so. Knowing how these conferences work will help you make the right decision about objecting to the Probation Status Report or not."),
            tags$p("Click NEXT to find out what happens at a Probation Review Conference.")
          ),
@@ -277,7 +277,7 @@ decision_tree <- list(
       tags$div(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
         tags$p(HTML(paste0("Due to the judge’s findings of a threat to public safety in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", 
-                           "<u>", "at this time", "</u>", 
+                           "<b>", "at this time", "</b>", 
                            ". However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
@@ -312,7 +312,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
-        tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", "<u>", "at this time", "</u>", ". However, you are eligible for another Probation Review Conference 1 year after this Conference."))),
+        tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", "<b>", "at this time", "</b>", ". However, you are eligible for another Probation Review Conference 1 year after this Conference."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>", 
                            ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
@@ -366,7 +366,7 @@ decision_tree <- list(
   list(
     result = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Congratulations, the judge ", "<u>", "must", "</u>", 
+        tags$p(HTML(paste0("<strong>", "Congratulations, the judge ", "<b>", "must", "</b>", 
                            "grant you early termination of probation!", "</strong>")))
       ),
     question_id = "prc_flow_q13_result"
@@ -703,7 +703,7 @@ server <- function(input, output, session){
       tags$div(
         tags$p(HTML(paste0("On or before ", "<strong>", format_pretty_date(as.Date(eligibility_date_val) - days(30)), "</strong>", 
                            ", your probation officer must  serve you with a document known as a Probation Status Report. They must also serve it on your prosecutor, court, your lawyer, and any registered victim. This document is ", 
-                           "<u>", "critically important", "</u>", " for you to review carefully."))),
+                           "<b>", "critically important", "</b>", " for you to review carefully."))),
         tags$p("This document must contain the following information"),
         tags$ul(
           tags$li("The date they believe you are eligible for a conference on early termination or changing probation conditions"),
@@ -865,7 +865,8 @@ server <- function(input, output, session){
       render_prc_flow_q11()
     }else if("question" %in% names(current_question) & length(current_question$question_list) == 0){
       tagList(
-        div(class = "question-text", current_question$question),
+        # div(class = "question-text", current_question$question),
+        div(current_question$question),
         if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0){
           radioButtons("answer", NULL, selected = character(0), choices = current_question$choices)
         }else if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) > 0){
@@ -901,14 +902,16 @@ server <- function(input, output, session){
       )
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
-        div(class = "question-text", current_question$question),
+        # div(class = "question-text", current_question$question),
+        div(current_question$question),
         current_question %>% 
           pluck("question_list") %>% 
           enframe() %>% 
           unnest(value) %>% 
           pmap(
             ~tagList(
-              div(class = "question-text", tags$div(tags$p(HTML(.y)))),
+              # div(class = "question-text", tags$div(tags$p(HTML(.y)))),
+              div(tags$div(tags$p(HTML(.y)))),
               radioButtons(
                 inputId = paste0("answer_", .x), 
                 selected = character(0),
@@ -922,7 +925,8 @@ server <- function(input, output, session){
       if(current_question$question_id == "section_7_act_44_relief_result"){
         render_section_7_act_44_relief_result()
       }else{
-        div(class = "question-text", current_question$result)
+        # div(class = "question-text", current_question$result)
+        div(current_question$result)
       }
     }
   })
