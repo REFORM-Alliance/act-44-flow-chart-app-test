@@ -984,7 +984,7 @@ server <- function(input, output, session){
       }else{
         answer_selected(TRUE)
       }
-    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0 & length(current_question$drop_down) == 0){
+    }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0 & length(current_question$drop_down) == 0 & "choices" %in% names(current_question)){
       if(current_question$question_id %in% c("section_7_q2", "prc_flow_q2")){
         ifelse(input$answer == "Yes", felony_or_misdemeanor("Felony"), felony_or_misdemeanor("Misdemeanor"))
       }else if(current_question$question_id == "prc_flow_q3_2"){
@@ -1087,7 +1087,8 @@ server <- function(input, output, session){
     current_question <- decision_tree[[current_index]]
     answer_selected_val <- answer_selected()
     
-    if(answer_selected_val == FALSE){
+    ##Accounts for if no answer selected or if the current question is just an info slide that doesn't need to be answered
+    if(answer_selected_val == FALSE & (length(current_question$next_question) == 1 & !("result" %in% names(current_question)) &  !("choices" %in% names(current_question))) == FALSE){
       shinyalert(
         title = "Missing answer",
         text = "Please select an answer before clicking Next",
