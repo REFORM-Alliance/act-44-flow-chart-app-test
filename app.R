@@ -1031,6 +1031,10 @@ server <- function(input, output, session){
   })
   
   observe({
+    print(answer_selected())
+  })
+  
+  observe({
     answer_selected_val = answer_selected()
     if(!is.null(answer_selected_val) & answer_selected_val == TRUE) {
       shinyjs::enable("next_button")
@@ -1135,42 +1139,50 @@ server <- function(input, output, session){
   
   observeEvent(input$violation_yes, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[1])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$violation_no, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[2])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$threat_to_safety_answer_yes, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[1])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$threat_to_safety_answer_no, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[2])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$same_conduct_answer_yes, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[1])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$same_conduct_answer_no, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[2])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$technical_violation_found_yes, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[1])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$technical_violation_found_no, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[2])
-    shinyjs::click("next_button")
+    answer_selected(TRUE)
+    # shinyjs::click("next_button")
   })
   
   observeEvent(input$back_button, {
