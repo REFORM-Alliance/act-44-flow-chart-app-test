@@ -113,7 +113,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p(HTML(paste0("You are eligible to apply for early termination of probation, or for modifications of probation conditions, under ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.",
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.",
                            " A judge has discretion to grant or deny this application at any time. However, you are not eligible for early termination or the modification of probation conditions under Act 44. Please consult with a lawyer with any questions about your eligibility.")))
       ),
     question_id = "prc_result_1"
@@ -280,7 +280,7 @@ decision_tree <- list(
                            "<b>", "at this time", "</b>", 
                            ". However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.", 
                            "A judge has discretion to grant such an application at any time regardless of any other issues."))),
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the date of the threat to public safety the judge found. Remember, you are eligible for another Probation Review Conference within 6 months of the date of this threat, and at that time can again consider changing the conditions of your probation or terminating probation early.")
       ),
@@ -314,7 +314,7 @@ decision_tree <- list(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
         tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference at this time. However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>", 
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>", 
                            ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the technical violation or violations the judge found, so you are informed of the judge’s decision-making.")
       ),
@@ -422,7 +422,7 @@ decision_tree <- list(
     question =
       tags$div(
         tags$p("Now we need to ask you about your behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you had any arrests, convictions, or violations while on probation or while in custody on the case that led them to probation."),
-        tags$p("First of all, were you or a loved one convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
+        tags$p("First of all, were you convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
       ),
     choices = c("Yes", "No"), 
     question_id = "section_7_q1_1",
@@ -461,9 +461,9 @@ decision_tree <- list(
   list(result = 
          tags$div(
            tags$p(HTML(paste0("You are entitled to apply for early termination or to have their conditions modified under ",
-                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
-                              " A judge has discretion to grant or deny this application. Due to the nature of yours or your loved one's convictions they are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
-                              "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                              " A judge has discretion to grant or deny this application. Due to the nature of your convictions, you are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.")))
          ),
        question_id = "no_act_44_relief_result"
   ),
