@@ -910,7 +910,6 @@ server <- function(input, output, session){
       )
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
-        # div(class = "question-text", current_question$question),
         div(current_question$question),
         current_question %>% 
           pluck("question_list") %>% 
@@ -918,7 +917,6 @@ server <- function(input, output, session){
           unnest(value) %>% 
           pmap(
             ~tagList(
-              # div(class = "question-text", tags$div(tags$p(HTML(.y)))),
               div(tags$div(tags$p(HTML(.y)))),
               radioButtons(
                 inputId = paste0("answer_", .x), 
@@ -933,47 +931,16 @@ server <- function(input, output, session){
       if(current_question$question_id == "section_7_act_44_relief_result"){
         render_section_7_act_44_relief_result()
       }else{
-        # div(class = "question-text", current_question$result)
         div(current_question$result)
       }
     }
   })
-  
-  # output$warning_ui <- renderUI({
-  #   current_index <- tail(history(), 1)
-  #   current_question <- decision_tree[[current_index]]
-  #   answer_selected_val = answer_selected()
-  #   
-  #   if(answer_selected_val == FALSE){
-  #     tags$p("Please select an answer", class = "warning-message")
-  #   }else {
-  #     ""
-  #   }
-  # })
   
   output$intro_buttons <- renderUI({
     div(
       actionButton("start_button", "Start", class = "btn btn-success")
     )
   })
-  
-  # output$button_ui <- renderUI({
-  #   current_index <- tail(history(), 1)
-  #   current_question <- decision_tree[[current_index]]
-  #   buttons <- list()
-  # 
-  #   if(length(history()) > 1){
-  #     buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
-  #   }
-  # 
-  #   if("result" %in% names(current_question)){
-  #     buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-  #   }else if(length(current_question$intro) == 0){
-  #     buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
-  #   }
-  # 
-  #   do.call(fluidRow, buttons)
-  # })
   
   output$button_ui <- renderUI({
     current_index <- tail(history(), 1)
@@ -1198,49 +1165,41 @@ server <- function(input, output, session){
   observeEvent(input$violation_yes, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[1])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$violation_no, {
     violation_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "section_7_q3")]]$choices[2])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$threat_to_safety_answer_yes, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[1])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$threat_to_safety_answer_no, {
     threat_to_safety_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$choices[2])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$same_conduct_answer_yes, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[1])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$same_conduct_answer_no, {
     same_conduct_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$choices[2])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$technical_violation_found_yes, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[1])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$technical_violation_found_no, {
     technical_violation_found_answer(decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$choices[2])
     answer_selected(TRUE)
-    # shinyjs::click("next_button")
   })
   
   observeEvent(input$back_button, {
@@ -1248,10 +1207,6 @@ server <- function(input, output, session){
       history(history()[1:(length(history()) - 1)])
     }
   })
-  
-  # observeEvent(input$finish_button, {
-  #   session$close()
-  # })
   
   observeEvent(input$start_over_button, {
     history(c(1)) # Reset history to the intro page index
