@@ -1008,10 +1008,15 @@ server <- function(input, output, session){
       answer_ids <- names(input)[grepl("^answer_q", names(input))]
       
       responses <- sapply(answer_ids, function(id) input[[id]])  
-      if(any(is.na(responses)) == TRUE){
-        answer_selected(FALSE)
-      }else{
+      null_responses <- 
+        responses %>% 
+        map(~is.null(.x)) %>% 
+        unlist() %>% 
+        any()
+      if(null_responses == FALSE){
         answer_selected(TRUE)
+      }else if(null_responses == TRUE){
+        answer_selected(FALSE)
       }
       
       answer_selected_val = answer_selected()
@@ -1035,6 +1040,25 @@ server <- function(input, output, session){
   })
   
   observe({
+    answer_ids <- names(input)[grepl("^answer_q", names(input))]
+    
+    responses <- sapply(answer_ids, function(id) input[[id]])  
+    null_responses <- 
+      responses %>% 
+      map(~is.null(.x)) %>% 
+      unlist() %>% 
+      any()
+    answer_selected_val = answer_selected()
+    
+    blah = answer_selected_val == FALSE & (length(current_question$next_question) == 1 & !("result" %in% names(current_question)) &  !("choices" %in% names(current_question))) == FALSE
+    
+    print(paste0("Q1: ", input$answer_q1))
+    print(paste0("Q2: ", input$answer_q2))
+    print(paste0("Q3: ", input$answer_q3))
+    print(paste0("Responses: ", paste(responses, collapse = ", ")))
+    print(responses)
+    print(paste0("Null Responses: ", null_responses))
+    print(paste0("Warning?: ", blah))
     print(answer_selected())
   })
   
@@ -1075,6 +1099,37 @@ server <- function(input, output, session){
         answer_selected(TRUE)
       }else{
         answer_selected(FALSE)
+      }
+    }
+  })
+  
+  observe({
+    current_index <- tail(history(), 1)
+    current_question <- decision_tree[[current_index]]
+    
+    if(length(current_question$question_list) > 0){
+      answer_ids <- names(input)[grepl("^answer_q", names(input))]
+      
+      responses <- sapply(answer_ids, function(id) input[[id]])  
+      null_responses <- 
+        responses %>% 
+        map(~is.null(.x)) %>% 
+        unlist() %>% 
+        any()
+      if(null_responses == FALSE){
+        answer_selected(TRUE)
+      }else if(null_responses == TRUE){
+        answer_selected(FALSE)
+      }
+      
+      answer_selected_val = answer_selected()
+      
+      if(answer_selected_val == TRUE){
+        if("Yes" %in% responses){
+          selected_answer("Yes")
+        }else{
+          selected_answer("No")
+        }
       }
     }
   })
