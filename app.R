@@ -43,13 +43,13 @@ decision_tree <- list(
       tags$div(
         tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
         tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>Pennsylvania's Act 44</a>, ",
+                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information/view-statute?txtType=HTM&SessYr=2023&ActNum=0044.&SessInd=0' target='_blank'>Pennsylvania's Act 44</a>, ",
                            "which requires courts to assess people for early termination of probation or the modification of probation conditions."))),
-        tags$p("This tool is designed to be used by anyone interested in Act 44, from judges and probation officers to people on probation and their loved ones. For ease of use, please indicate whether you are a professional who routinely works in this field looking for guidance in applying this law, or a person or probation or their loved one who is looking to see how Act 44 impacts you. The tool will produce the same results no matter who you are, we just want to make this easier for you to use and provide the most relevant information possible.")
+        tags$p("This tool can be used by anyone, but is specifically designed to be used by people on probation. To begin using the tool, please click on the START button below.")
       ),
     content_below_buttons = 
       tags$div(
-        tags$p("Please note that this tool is specifically designed to be used by people on their probation or others who do not professionally work in this system. For those who work professionally in this field, we recommend using the flow chart available below that walks through every step in the Act 44 process regarding early termination and modification of probation conditions."),
+        tags$p("This tool is specifically designed to be used by people on their probation or others who do not professionally work in this system. For those who work in this field, we have created other tools to help navigate every step in the Act 44 process regarding early termination and modification of probation conditions, and recommend using the flowchart below."),
         tags$a(
           href = "act-44-early-termination-flow-chart.png",
           target = "_blank",
@@ -67,10 +67,10 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("First we need to ask when you or your loved one was sentenced. The type of relief that a person is eligible for under Act 44 changes dramatically depending on when they were sentenced.")),
-        tags$p(HTML(paste0("Do you know the date you or your loved one was sentenced? If you do not, you can look it up ", 
+        tags$p(strong("First we need to ask when you were sentenced. We ask this question first because Act 44 provides very different options for you depending on when you were sentenced.")),
+        tags$p(HTML(paste0("Do you know when you were sentenced? If not, you can look it up ", 
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
-        tags$p("What date was you or your loved one sentenced?")
+        tags$p("What date were you sentenced?")
       ),
     choices = c("Yes", "No"),
     date_question = "Yes",
@@ -84,7 +84,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("Next we need to ask you some questions about the charge or charges for which you were sentenced to probation. This is important because people sentenced for certain types of crimes are eligible for different kinds of legal options than others.")),
-        tags$p(HTML(paste0("Do you know the crimes for which you or your loved one were convicted? If not, you can look them up ",
+        tags$p(HTML(paste0("Do you know the crimes for which you were convicted? If not, you can look them up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
         tags$p("Were you sentenced to probation for one of the following types of crimes?"),
         tags$ul(
@@ -95,7 +95,7 @@ decision_tree <- list(
                               " or ", 
                               "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=99&subsctn=51' target='_blank'>here</a>)"))),
           tags$li(HTML(paste0("A crime of ", 
-                              "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank'>homicide</a>)", 
+                              "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank'>homicide</a>", 
                               ", including manslaughter, causing or aiding suicide, or drug delivery resulting in death"))),
           tags$li(HTML(paste0("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027..HTM' target='_blank'>Simple assault</a>",  
                               " committed against a family or household member"))),
@@ -121,7 +121,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. We need to ask about this to determine when you are eligible for a mandatory conference as part of Act 44. Do you know if any of the charges for which you were sentenced to probation was a felony? If not, you can look that up ",
+        tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. This is important because it helps determine when you might be eligible for early termination. Do you know if any of the charges for which you were sentenced to probation was a felony? If not, you can look that up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>"))),
         tags$p("Were any of the charges for which you were sentenced to probation a felony?")
       ),
@@ -159,7 +159,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Next we need to ask more about your misdemeanor sentence, to help determine when you are eligible for a mandatory probation review conference as part of Act 44. Were you convicted of multiple misdemeanors that resulted in consecutive sentences? Again, if you don’t know this, you can look it up ",
+        tags$p(HTML(paste0("<strong>", "Next we need to ask more about your case, it will help us determine when you might be eligible for early termination. Were you convicted of multiple misdemeanors that resulted in consecutive sentences? Again, if you don’t know this, you can look it up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>")))
       ),
     choices = c("Yes", "No"),
@@ -172,7 +172,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p("We need to ask one more question about these misdemeanor convictions, to help determine when you are eligible for a mandatory probation review conference. The law treats multiple misdemeanor convictions differently depending on whether the crimes were related to each other. Were the convictions from the same “conduct or arising from the same criminal episode?” Or were they  based on separate conduct from separate crimes?")
+        tags$p("We need to ask one final question about these convictions, to help determine when you might be eligible for early termination. We need to know whether your misdemeanor convictions were for the same acts or different acts? In other words, were the convictions from one incident at one time, or unrelated incidents at different times?")
       ),
     choices = c("Same Conduct", "Different Conduct"),
     question_id = "prc_flow_q3_3",
@@ -197,7 +197,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("Next we need to ask you about what you have been doing while on probation. Act 44 allows those who have finished certain programs or graduated from high school or college while on probation to be eligible for early termination earlier than others.")),
-        tags$p("Did you or your loved one do any of the following things while on probation?"),
+        tags$p("Did you do any of the following things while on probation?"),
         tags$ul(
           tags$li("Earn a high school diploma or GED"),
           tags$li("Earn an associate degree from an accredited university, college, seminary college, community college, or two-year college"),
@@ -262,7 +262,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("Next, a judge will look at any alleged bad acts you have committed while on probation. This is important because if the judge finds you have committed one of these acts, they are not allowed to grant you early termination.")),
-        tags$p("First, the judge will consider whether there is clear and convincing evidence that you violated the terms of your probation in the 6 months prior to the conference in a way that constituted an “identifiable threat to public safety.” The term “clear and convincing” evidence has important legal meaning: it means more simply making it more likely than not that the violation occurred. You should consult an attorney to discuss exactly what it means, if this is a potential issue for you."),
+        tags$p("First, the judge will decide whether there is clear and convincing evidence that you caused an “identifiable threat to public safety.” The terms “clear and convincing evidence” and “identifiable threat to public safety” have important legal meanings, please consult an attorney if you have any question about their meaning."),
         tags$p("The options available at a Probation Review Conference change depending on whether a judge finds this “identifiable threat to public safety.” Click below to see what happens next.")
       ),
     choices = c("Found Threat to Public Safety", "Did Not Find Threat to Public Safety"),
@@ -312,7 +312,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
-        tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference ", "<b>", "at this time", "</b>", ". However, you are eligible for another Probation Review Conference 1 year after this Conference."))),
+        tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference at this time. However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>", 
                            ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
@@ -323,7 +323,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("Next, a judge will look at  other behavior during the entirety of your time on probation.  This is different than the last 2 steps where the judge only looked at behavior in the past 6 months. ")),
+        tags$p(strong("Next, a judge will look at other behavior during the your time on probation. For this step, the judge will look at your behavior the entire time you were on probation, not just the past 6 months.")),
         tags$p("For this step, the judge will look at your behavior in two categories, for the entire time you have been on probation:"),
         tags$ol(
           type = "1",
@@ -367,7 +367,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p(HTML(paste0("<strong>", "Congratulations, the judge ", "<b>", "must", "</b>", 
-                           "grant you early termination of probation!", "</strong>")))
+                           " grant you early termination of probation!", "</strong>")))
       ),
     question_id = "prc_flow_q13_result"
   ),
@@ -403,7 +403,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("Next we need to ask you some questions about the crime or crimes for which you or your loved one was sentenced. Do you know the crimes for which you or your loved one was convicted? If not, you can look them up ",
+        tags$p(HTML(paste0("Next we need to ask you some questions about the crime or crimes for which you were sentenced. Do you know the crimes for which you were convicted? If not, you can look them up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
         tags$p("Was the person sentenced to probation for one of the following types of crimes?")
       ),
@@ -421,7 +421,7 @@ decision_tree <- list(
   list(
     question =
       tags$div(
-        tags$p("Now we need to ask you about you or your loved one's behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you or your loved one had any arrests, convictions, or violations while on probation or while in custody on the case that led them to probation."),
+        tags$p("Now we need to ask you about your behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you had any arrests, convictions, or violations while on probation or while in custody on the case that led them to probation."),
         tags$p("First of all, were you or a loved one convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
       ),
     choices = c("Yes", "No"), 
@@ -435,7 +435,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("Now we need to ask you about the severity of the charge you or your loved one was convicted of. This is important because it will determine when you or your loved one are eligible for benefits under Act 44.")),
+        tags$p(strong("Now we need to ask you about the severity of the charge you were convicted of. This is important because it will determine when you are eligible for benefits under Act 44.")),
         tags$p(HTML(paste0("Were any of these charges a felony? If you don't know the answer to this, you can look up it up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.")))
       ),
@@ -455,12 +455,12 @@ decision_tree <- list(
     )
   ),
   list(
-    result = "You or your loved one is entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by eligibility date",
+    result = "You are entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by eligibility date",
     question_id = "section_7_act_44_relief_result"
   ),
   list(result = 
          tags$div(
-           tags$p(HTML(paste0("You or your loved one is entitled to apply for early termination or to have their conditions modified under ",
+           tags$p(HTML(paste0("You are entitled to apply for early termination or to have their conditions modified under ",
                               "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.", 
                               " A judge has discretion to grant or deny this application. Due to the nature of yours or your loved one's convictions they are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
                               "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
