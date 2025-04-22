@@ -466,6 +466,14 @@ decision_tree <- list(
                               "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>42 P.A.C.S. § 9771</a>.")))
          ),
        question_id = "no_act_44_relief_result"
+  ),
+  list(
+    result =
+      tags$div(
+        tags$h2(strong("Thank you for using the Act 44 Early Termination Tool!")),
+        tags$p("We hope this tool has been helpful in understanding your potential eligibility for early termination or modification of probation conditions under Act 44.")
+      ),
+    question_id = "finished_page"
   )
 )
 
@@ -949,21 +957,41 @@ server <- function(input, output, session){
     )
   })
   
+  # output$button_ui <- renderUI({
+  #   current_index <- tail(history(), 1)
+  #   current_question <- decision_tree[[current_index]]
+  #   buttons <- list()
+  # 
+  #   if(length(history()) > 1){
+  #     buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
+  #   }
+  # 
+  #   if("result" %in% names(current_question)){
+  #     buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
+  #   }else if(length(current_question$intro) == 0){
+  #     buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
+  #   }
+  # 
+  #   do.call(fluidRow, buttons)
+  # })
+  
   output$button_ui <- renderUI({
     current_index <- tail(history(), 1)
     current_question <- decision_tree[[current_index]]
     buttons <- list()
-
-    if(length(history()) > 1){
+    
+    if(length(history()) > 1 & current_question$question_id != "intro_page"){
       buttons <- append(buttons, list(actionButton("back_button", "Back", class = "btn btn-warning")))
     }
-
-    if("result" %in% names(current_question)){
+    
+    if(current_question$question_id == "finished_page"){
+      buttons <- append(buttons, list(actionButton("start_over_button", "Start Over", class = "btn btn-success")))
+    }else if("result" %in% names(current_question) & current_question$question_id != "finished_page"){
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
-    }else if(length(current_question$intro) == 0){
+    }else if(length(current_question$intro) == 0 & current_question$question_id != "finished_page"){
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
     }
-
+    
     do.call(fluidRow, buttons)
   })
   
@@ -1221,8 +1249,36 @@ server <- function(input, output, session){
     }
   })
   
+  # observeEvent(input$finish_button, {
+  #   session$close()
+  # })
+  
+  observeEvent(input$start_over_button, {
+    history(c(1)) # Reset history to the intro page index
+    sentencing_date(NULL)
+    sentencing_length_month(NULL)
+    sentencing_length_year(NULL)
+    selected_answer(NULL)
+    felony_or_misdemeanor(NULL)
+    multiple_misdemeanors("N/A")
+    education_credits_answer(NULL)
+    education_credits_more_than_2_answer("N/A")
+    probation_after_parole_answer("N/A")
+    final_year_of_parole_answer("N/A")
+    eligibility_date_section_7(NULL)
+    eligibility_date_prc(NULL)
+    violation_answer(NULL)
+    threat_to_safety_answer(NULL)
+    same_conduct_answer("N/A")
+    technical_violation_found_answer(NULL)
+    answer_selected(FALSE)
+    answer_years_selected(FALSE)
+    answer_months_selected(FALSE)
+  })
+  
   observeEvent(input$finish_button, {
-    session$close()
+    finished_page_index <- which(map_chr(decision_tree, "question_id") == "finished_page")
+    history(c(history(), finished_page_index))
   })
 }
 
