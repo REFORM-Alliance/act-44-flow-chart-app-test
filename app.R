@@ -592,7 +592,7 @@ server <- function(input, output, session){
     shinyalert(
       title = "Leaving Application",
       text = "This will take you to a new website.",
-      type = "warning",
+      type = "info",
       showCancelButton = TRUE,
       confirmButtonText = "Continue",
       callbackR = function(x){
