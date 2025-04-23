@@ -524,18 +524,29 @@ ui <- fluidPage(
       $(document).on('click', 'a.external-link', function(e) {
         e.preventDefault();
         var href = $(this).attr('href');
+        $(this).data('href-backup', href); // Backup the href
+        $(this).removeAttr('href'); // Temporarily remove href
         Shiny.setInputValue('js_href', href);
       });
-      
+
       Shiny.addCustomMessageHandler('open_url', function(message) {
         window.open(message, '_blank');
+        // Restore href after continuing (though the page will navigate away)
+        $('a.external-link').each(function() {
+          if ($(this).data('href-backup')) {
+            $(this).attr('href', $(this).data('href-backup'));
+            $(this).removeData('href-backup');
+          }
+        });
       });
-      
-      Shiny.addCustomMessageHandler('reset_click', function(href) {
-        $('a.external-link[href=\"' + href + '\"]').data('clicked', false);
-      })
-      "
-    ))
+
+     Shiny.addCustomMessageHandler('reset_link', function(href) {
+       $('a.external-link[data-href-backup=\"' + href + '\"]').each(function() {
+         $(this).attr('href', $(this).data('href-backup'));
+         $(this).removeData('href-backup');
+       });
+     });
+    "))
   ),
   
   div(class = "logo-container",
@@ -575,25 +586,6 @@ server <- function(input, output, session){
   answer_years_selected <- reactiveVal(FALSE)
   answer_months_selected <- reactiveVal(FALSE)
   
-  # observeEvent(input$js_href, {
-  #   href <- input$js_href
-  #   
-  #   shinyalert(
-  #     title = "Leaving Application",
-  #     text = "This will take you to a new website.",
-  #     type = "warning",
-  #     showCancelButton = TRUE,
-  #     confirmButtonText = "Continue",
-  #     callbackR = function(x) {
-  #       if (isTRUE(x)) {
-  #         # Directly execute JavaScript to open the URL
-  #         session$sendCustomMessage("open_url", href)
-  #       }
-  #       # No need to re-enable the link here, browser will navigate away
-  #     }
-  #   )
-  # }, ignoreInit = TRUE)
-  
   observeEvent(input$js_href, {
     href <- input$js_href
     
@@ -603,20 +595,15 @@ server <- function(input, output, session){
       type = "warning",
       showCancelButton = TRUE,
       confirmButtonText = "Continue",
-      callbackR = function(x) {
+      callbackR = function(x){
         if(isTRUE(x)){
           session$sendCustomMessage("open_url", href)
         }else{
-          session$sendCustomMessage("reset_click", href)
+          session$sendCustomMessage("reset_link", href)
         }
       }
     )
   }, ignoreInit = TRUE)
-  
-  # # Add a custom message handler in the server to execute the window.open()
-  # session$onSessionInitialized(function() {
-  #   session$sendCustomMessage("define_js", "") # Trigger JS definition on start
-  # })
   
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
