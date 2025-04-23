@@ -43,7 +43,7 @@ decision_tree <- list(
       tags$div(
         tags$p(strong("Welcome to REFORM Alliance's Act 44 Early Termination tool.")),
         tags$p(HTML(paste0("This tool is designed to help users navigate the legal requirements of ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information/view-statute?txtType=HTM&SessYr=2023&ActNum=0044.&SessInd=0' target='_blank'>Pennsylvania's Act 44</a>, ",
+                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information/view-statute?txtType=HTM&SessYr=2023&ActNum=0044.&SessInd=0' target='_blank' class='external-link'>Pennsylvania's Act 44</a>, ",
                            "which requires courts to assess people for early termination of probation or the modification of probation conditions."))),
         tags$p("This tool can be used by anyone, but is specifically designed to be used by people on probation. To begin using the tool, please click on the START button below.")
       ),
@@ -59,7 +59,7 @@ decision_tree <- list(
           )
         ),
         tags$p(HTML(paste0("The tool and flowchart are designed to help navigate Act 44, but they are no substitute for legal advice and are designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank'>here</a>.")))
+                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank' class='external-link'>here</a>.")))
       ),
     next_question = "defendant_sentencing_date",
     question_id = "intro_page"
@@ -69,7 +69,7 @@ decision_tree <- list(
       tags$div(
         tags$p(strong("First we need to ask when you were sentenced. We ask this question first because Act 44 provides very different options for you depending on when you were sentenced.")),
         tags$p(HTML(paste0("Do you know when you were sentenced? If not, you can look it up ", 
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
         tags$p("What date were you sentenced?")
       ),
     choices = c("Yes", "No"),
@@ -85,21 +85,21 @@ decision_tree <- list(
       tags$div(
         tags$p(strong("Next we need to ask you some questions about the charge or charges for which you were sentenced to probation. This is important because people sentenced for certain types of crimes are eligible for different kinds of legal options than others.")),
         tags$p(HTML(paste0("Do you know the crimes for which you were convicted? If not, you can look them up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
         tags$p("Were you sentenced to probation for one of the following types of crimes?"),
         tags$ul(
           tags$li(HTML(paste0("A ", 
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=14&subsctn=0' target='_blank'>Crime of Violence</a>"))),
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=14&subsctn=0' target='_blank' class='external-link'>Crime of Violence</a>"))),
           tags$li(HTML(paste0("A crime related to sex offender registration (defined either ", 
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=91&subsctn=0' target='_blank'>here</a>", 
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=91&subsctn=0' target='_blank' class='external-link'>here</a>", 
                               " or ", 
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=99&subsctn=51' target='_blank'>here</a>)"))),
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=99&subsctn=51' target='_blank' class='external-link'>here</a>)"))),
           tags$li(HTML(paste0("A crime of ", 
-                              "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank'>homicide</a>", 
+                              "<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.025..HTM' target='_blank' class='external-link'>homicide</a>", 
                               ", including manslaughter, causing or aiding suicide, or drug delivery resulting in death"))),
-          tags$li(HTML(paste0("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027..HTM' target='_blank'>Simple assault</a>",  
+          tags$li(HTML(paste0("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027..HTM' target='_blank' class='external-link'>Simple assault</a>",  
                               " committed against a family or household member"))),
-          tags$li(HTML("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027.009.001..HTM' target='_blank'>Stalking</a>"))
+          tags$li(HTML("<a href='https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/18/00.027.009.001..HTM' target='_blank' class='external-link'>Stalking</a>"))
         )
       ),
     choices = c("Yes", "No"),
@@ -113,7 +113,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p(HTML(paste0("You are eligible to apply for early termination of probation, or for modifications of probation conditions, under ",
-                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.",
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.",
                            " A judge has discretion to grant or deny this application at any time. However, you are not eligible for early termination or the modification of probation conditions under Act 44. Please consult with a lawyer with any questions about your eligibility.")))
       ),
     question_id = "prc_result_1"
@@ -122,7 +122,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. This is important because it helps determine when you might be eligible for early termination. Do you know if any of the charges for which you were sentenced to probation was a felony? If not, you can look that up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>"))),
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>"))),
         tags$p("Were any of the charges for which you were sentenced to probation a felony?")
       ),
     choices = c("Yes", "No"),
@@ -160,7 +160,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(HTML(paste0("<strong>", "Next we need to ask more about your case, it will help us determine when you might be eligible for early termination. Were you convicted of multiple misdemeanors that resulted in consecutive sentences? Again, if you don’t know this, you can look it up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>")))
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>")))
       ),
     choices = c("Yes", "No"),
     question_id = "prc_flow_q3_2",
@@ -185,7 +185,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a mandatory conference as part of Act 44. Do you know how long the sentence was? If not, you can look it up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.", "</strong>"))),
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>"))),
         tags$p("Please enter the sentence length here. If you are serving multiple probation sentences consecutively, please add the sentences together.")
       ),
     drop_down = TRUE,
@@ -280,7 +280,7 @@ decision_tree <- list(
                            "<b>", "at this time", "</b>", 
                            ". However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ",
-                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.", 
                            "A judge has discretion to grant such an application at any time regardless of any other issues."))),
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the date of the threat to public safety the judge found. Remember, you are eligible for another Probation Review Conference within 6 months of the date of this threat, and at that time can again consider changing the conditions of your probation or terminating probation early.")
       ),
@@ -314,7 +314,7 @@ decision_tree <- list(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
         tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference at this time. However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
-                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>", 
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>", 
                            ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the technical violation or violations the judge found, so you are informed of the judge’s decision-making.")
       ),
@@ -404,11 +404,11 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(HTML(paste0("Next we need to ask you some questions about the crime or crimes for which you were sentenced. Do you know the crimes for which you were convicted? If not, you can look them up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>."))),
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
         tags$p("Was the person sentenced to probation for one of the following types of crimes?")
       ),
     question_list = list("q1" = "A crime related to sex offender registration",
-                         "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank'>crime of violence</a>"),
+                         "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank' class='external-link'>crime of violence</a>"),
                          "q3" = "Assault or stalking against a family or household member? This only counts if they were convicted under under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking)"),
     choices = c("Yes", "No"),
     question_id = "section_7_q1",
@@ -437,7 +437,7 @@ decision_tree <- list(
       tags$div(
         tags$p(strong("Now we need to ask you about the severity of the charge you were convicted of. This is important because it will determine when you are eligible for benefits under Act 44.")),
         tags$p(HTML(paste0("Were any of these charges a felony? If you don't know the answer to this, you can look up it up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank'>here</a>.")))
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.")))
       ),
     choices = c("Yes", "No"),
     question_id = "section_7_q2",
@@ -461,9 +461,9 @@ decision_tree <- list(
   list(result = 
          tags$div(
            tags$p(HTML(paste0("You are entitled to apply for early termination or to have their conditions modified under ",
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.", 
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.", 
                               " A judge has discretion to grant or deny this application. Due to the nature of your convictions, you are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank'>42 P.A.C.S. § 9771</a>.")))
+                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.")))
          ),
        question_id = "no_act_44_relief_result"
   ),
@@ -519,6 +519,22 @@ ui <- fluidPage(
         color: white;
       }
       "
+    )),
+    tags$script(HTML("
+      $(document).on('click', 'a.external-link', function(e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        Shiny.setInputValue('js_href', href);
+      });
+      
+      Shiny.addCustomMessageHandler('open_url', function(message) {
+        window.open(message, '_blank');
+      });
+      
+      Shiny.addCustomMessageHandler('reset_click', function(href) {
+        $('a.external-link[href=\"' + href + '\"]').data('clicked', false);
+      })
+      "
     ))
   ),
   
@@ -533,6 +549,7 @@ ui <- fluidPage(
       uiOutput("button_ui")
   )
 )
+
 
 ##Server
 server <- function(input, output, session){
@@ -557,6 +574,49 @@ server <- function(input, output, session){
   answer_selected <- reactiveVal(FALSE)
   answer_years_selected <- reactiveVal(FALSE)
   answer_months_selected <- reactiveVal(FALSE)
+  
+  # observeEvent(input$js_href, {
+  #   href <- input$js_href
+  #   
+  #   shinyalert(
+  #     title = "Leaving Application",
+  #     text = "This will take you to a new website.",
+  #     type = "warning",
+  #     showCancelButton = TRUE,
+  #     confirmButtonText = "Continue",
+  #     callbackR = function(x) {
+  #       if (isTRUE(x)) {
+  #         # Directly execute JavaScript to open the URL
+  #         session$sendCustomMessage("open_url", href)
+  #       }
+  #       # No need to re-enable the link here, browser will navigate away
+  #     }
+  #   )
+  # }, ignoreInit = TRUE)
+  
+  observeEvent(input$js_href, {
+    href <- input$js_href
+    
+    shinyalert(
+      title = "Leaving Application",
+      text = "This will take you to a new website.",
+      type = "warning",
+      showCancelButton = TRUE,
+      confirmButtonText = "Continue",
+      callbackR = function(x) {
+        if(isTRUE(x)){
+          session$sendCustomMessage("open_url", href)
+        }else{
+          session$sendCustomMessage("reset_click", href)
+        }
+      }
+    )
+  }, ignoreInit = TRUE)
+  
+  # # Add a custom message handler in the server to execute the window.open()
+  # session$onSessionInitialized(function() {
+  #   session$sendCustomMessage("define_js", "") # Trigger JS definition on start
+  # })
   
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
