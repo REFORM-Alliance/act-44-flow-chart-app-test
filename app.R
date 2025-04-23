@@ -486,11 +486,11 @@ ui <- fluidPage(
   tags$head(
     tags$style(HTML(
       "
-      .question-text{ font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+      .question-text{ font-size: 20px; margin-bottom: 20px; }
       .result-text{ font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
       .shiny-input-container{ margin-bottom: 10px; }
       .btn-container{ margin-top: 20px; }
-      .logo-container{ text-align: center; margin-bottom: 20px; margin-top: 10px; } /* Added margin-top */
+      .logo-container{ text-align: center; margin-bottom: 40px; margin-top: 10px; } /* Added margin-top */
       .logo{ max-width: 200px; height: auto; }
 
       /* Custom button styling */
@@ -526,7 +526,8 @@ ui <- fluidPage(
       img(src = "reform-logo-charcoal.png", class = "logo")
   ),
   
-  titlePanel(strong("Act 44 Early Termination Tool")),
+  titlePanel(div(strong("Act 44 Early Termination Tool"),
+                 style = {'margin-top: 60px; margin-bottom: 40px'})),
   uiOutput("quiz_ui"),
   div(class = "btn-container",
       uiOutput("button_ui")
@@ -653,7 +654,7 @@ server <- function(input, output, session){
     )
     if(!is.null(eligibility_date_val)){
       tagList(
-        question_content,
+        div(question_content, class = "question-text"),
         fluidRow(
           column(width = 12, 
                  div(
@@ -689,7 +690,7 @@ server <- function(input, output, session){
     
     if(!is.null(eligibility_date_val)){
       tagList(
-        question_content, 
+        div(question_content, class = "question-text"), 
         fluidRow(
           column(
             width = 12,
@@ -729,7 +730,7 @@ server <- function(input, output, session){
     
     if(!is.null(eligibility_date_val)){
       tagList(
-        question_content, 
+        div(question_content, class = "question-text"), 
         fluidRow(
           column(
             width = 12,
@@ -758,7 +759,7 @@ server <- function(input, output, session){
     
     if(!is.null(eligibility_date_val)){
       tagList(
-        question_content, 
+        div(question_content, class = "question-text"), 
         fluidRow(
           column(
             width = 12,
@@ -778,7 +779,7 @@ server <- function(input, output, session){
     question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q10")]]$question
     
     tagList(
-      question_content,
+      div(question_content, class = "question-text"),
       fluidRow(
         column(width = 12, 
                div(
@@ -803,7 +804,7 @@ server <- function(input, output, session){
     question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q3_3")]]$question
     
     tagList(
-      question_content,
+      div(question_content, class = "question-text"),
       fluidRow(
         column(width = 12, 
                div(
@@ -828,7 +829,7 @@ server <- function(input, output, session){
     question_content <- decision_tree[[which(map_chr(decision_tree, "question_id") == "prc_flow_q11")]]$question
     
     tagList(
-      question_content,
+      div(question_content, class = "question-text"),
       fluidRow(
         column(width = 12, 
                div(
@@ -855,9 +856,9 @@ server <- function(input, output, session){
     
     if(length(current_question$intro) > 0){
       tagList(
-        current_question$content_above_buttons,
+        div(current_question$content_above_buttons, class = "question-text"),
         uiOutput("intro_buttons"),
-        current_question$content_below_buttons
+        div(current_question$content_below_buttons, class = "question-text")
       )
     }else if(current_question$question_id == "section_7_q3"){
       render_section_7_q3()
@@ -874,7 +875,7 @@ server <- function(input, output, session){
     }else if("question" %in% names(current_question) & length(current_question$question_list) == 0){
       tagList(
         # div(class = "question-text", current_question$question),
-        div(current_question$question),
+        div(current_question$question, class = "question-text"),
         if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) == 0){
           radioButtons("answer", NULL, selected = character(0), choices = current_question$choices)
         }else if("choices" %in% names(current_question) & length(current_question$choices) > 0 & length(current_question$date_question) > 0){
@@ -910,7 +911,7 @@ server <- function(input, output, session){
       )
     }else if("question" %in% names(current_question) & length(current_question$question_list) > 0 & length(current_question$date_question) == 0){
       tagList(
-        div(current_question$question),
+        div(current_question$question, class = "question-text"),
         current_question %>% 
           pluck("question_list") %>% 
           enframe() %>% 
@@ -931,7 +932,7 @@ server <- function(input, output, session){
       if(current_question$question_id == "section_7_act_44_relief_result"){
         render_section_7_act_44_relief_result()
       }else{
-        div(current_question$result)
+        div(current_question$result, class = "question-text")
       }
     }
   })
