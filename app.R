@@ -486,7 +486,7 @@ ui <- fluidPage(
   tags$head(
     tags$style(HTML(
       "
-      .question-text{ font-size: 20px; margin-bottom: 20px; }
+      .question-text{ font-size: 20px; margin-bottom: 30px; margin-top: 30px}
       .result-text{ font-size: 20px; font-weight: bold; color: #28a745; margin-top: 20px; }
       .shiny-input-container{ margin-bottom: 10px; }
       .btn-container{ margin-top: 20px; }
