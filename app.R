@@ -405,7 +405,7 @@ decision_tree <- list(
       tags$div(
         tags$p(HTML(paste0("Next we need to ask you some questions about the crime or crimes for which you were sentenced. Do you know the crimes for which you were convicted? If not, you can look them up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
-        tags$p("Was the person sentenced to probation for one of the following types of crimes?")
+        tags$p("Were you sentenced to probation for one of the following types of crimes?")
       ),
     question_list = list("q1" = "A crime related to sex offender registration",
                          "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank' class='external-link'>crime of violence</a>"),
@@ -458,12 +458,20 @@ decision_tree <- list(
     result = "You are entitled to a conference under Act 44 where a judge will determine whether their probation should be terminated or modified. That conference must be held by eligibility date",
     question_id = "section_7_act_44_relief_result"
   ),
+  # list(result = 
+  #        tags$div(
+  #          tags$p(HTML(paste0("You are entitled to apply for early termination or to have their conditions modified under ",
+  #                             "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.", 
+  #                             " A judge has discretion to grant or deny this application. Due to the nature of your convictions, you are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
+  #                             "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.")))
+  #        ),
+  #      question_id = "no_act_44_relief_result"
+  # ),
   list(result = 
          tags$div(
-           tags$p(HTML(paste0("You are entitled to apply for early termination or to have their conditions modified under ",
+           tags$p(HTML(paste0("You are eligible to apply for early termination of probation or for modifications of probation conditions, under ",
                               "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.", 
-                              " A judge has discretion to grant or deny this application. Due to the nature of your convictions, you are not entitled to an automatic hearing under Act 44, but they are always eligible to apply for termination or modification of conditions under ",
-                              "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.")))
+                              " A judge has discretion to grant or deny this application at any time. However, you are not eligible for early termination or the modification of probation conditions under Act 44. Please consult with a lawyer with any questions about your eligibility.")))
          ),
        question_id = "no_act_44_relief_result"
   ),
@@ -481,7 +489,6 @@ decision_tree <- list(
 ####Create App####
 ui <- fluidPage(
   useShinyjs(),
-  # useShinyalert(),
   theme = shinytheme("flatly"),  
   tags$head(
     tags$style(HTML(
@@ -521,31 +528,31 @@ ui <- fluidPage(
       "
     )),
     tags$script(HTML("
-      $(document).on('click', 'a.external-link', function(e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        $(this).data('href-backup', href); // Backup the href
+    $(document).on('click', 'a.external-link', function(e) {
+      e.preventDefault();
+      var $this = $(this);
+      var href = $this.attr('href');
+      $this.data('href-backup', href); // Backup the href
+      Shiny.setInputValue('js_href', href);
+    });
+
+    Shiny.addCustomMessageHandler('open_url', function(message) {
+      window.open(message, '_blank');
+      // No need to restore here, navigation happens
+    });
+
+    Shiny.addCustomMessageHandler('remove_href', function(href) {
+      $('a.external-link[data-href-backup=\"' + href + '\"]').each(function() {
         $(this).removeAttr('href'); // Temporarily remove href
-        Shiny.setInputValue('js_href', href);
       });
+    });
 
-      Shiny.addCustomMessageHandler('open_url', function(message) {
-        window.open(message, '_blank');
-        // Restore href after continuing (though the page will navigate away)
-        $('a.external-link').each(function() {
-          if ($(this).data('href-backup')) {
-            $(this).attr('href', $(this).data('href-backup'));
-            $(this).removeData('href-backup');
-          }
-        });
+    Shiny.addCustomMessageHandler('restore_href', function(href) {
+      $('a.external-link[data-href-backup=\"' + href + '\"]').each(function() {
+        $(this).attr('href', $(this).data('href-backup'));
+        $(this).removeData('href-backup');
       });
-
-     Shiny.addCustomMessageHandler('reset_link', function(href) {
-       $('a.external-link[data-href-backup=\"' + href + '\"]').each(function() {
-         $(this).attr('href', $(this).data('href-backup'));
-         $(this).removeData('href-backup');
-       });
-     });
+    });
     "))
   ),
   
@@ -598,8 +605,9 @@ server <- function(input, output, session){
       callbackR = function(x){
         if(isTRUE(x)){
           session$sendCustomMessage("open_url", href)
+          session$sendCustomMessage("remove_href", href)
         }else{
-          session$sendCustomMessage("reset_link", href)
+          session$sendCustomMessage("restore_href", href)
         }
       }
     )
@@ -681,12 +689,12 @@ server <- function(input, output, session){
     eligibility_date_val <- eligibility_date_section_7()
     question_content <- tags$div(
       tags$p(HTML(paste0(
-        "Now we need to ask you about the probationer's behavior in the following dates: ",
+        "Now we need to ask you about your behavior in the following dates: ",
         "from ", "<strong>", format_pretty_date(eligibility_date_val - months(6)), "</strong>",
         " to ", "<strong>", format_pretty_date(eligibility_date_val), "</strong>",
-        ". A judge will look at the probationer's record and determine whether they have committed any technical violations during this time period. If they do, it changes what relief the probationer can receive. A technical violation is defined as the violation of any specific term of probation that is not a criminal conviction."
+        ". Act 44 requires a judge to look at any alleged bad acts you have committed during this time. This is important because if the judge finds you have committed one of these acts, they are not required consider you for early termination. A judge will look at your record and determine whether you have committed any technical violations during this time period."
       ))),
-      tags$p("A judge will assess whether the probationer has committed a violation in the following categories:"),
+      tags$p("They will decide whether you have committed a violation in the following categories:"),
       tags$ol(type = "I",
               tags$li("A violation that was sexual in nature"),
               tags$li("A violation that involved assaultive behavior or included a credible threat to cause bodily injury to another, including incidents involving domestic violence"),
@@ -696,8 +704,7 @@ server <- function(input, output, session){
               tags$li("A violation which involved an intentional and unexcused failure to adhere to recommended programming or conditions on three or more separate occasions. Multiple technical violations stemming from the same episode of events do not constitute separate technical violations."),
               tags$li("A violation that involved an identifiable threat to public safety")
       ),
-      tags$p("If the judge finds that a violation has occurred, the next steps will be as follows:"),
-      tags$p("If the judge finds no technical violations, the next steps are here:")
+      tags$p("If the judge finds that you have committed one of these violations the next steps will be as follows:")
     )
     if(!is.null(eligibility_date_val)){
       tagList(
@@ -731,8 +738,9 @@ server <- function(input, output, session){
     
     question_content <-
       tags$div(
-        tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review the person on probation to determine whether they have their probation terminated or the conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for people on probation to give the court any information that would help it make this decision. In fact, the law requires the court to give both the person on probation and the prosecutor an opportunity to provide written comments on this issue prior to its determination. Do not pass up this opportunity!"))),
-        tags$p("In the meantime, the person on probation is entitled to apply for early termination or to have their conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
+        tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review your case to determine whether to have your probation terminated or your conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for you to give the court any information that would help it make this decision. In fact, the law requires the court to give both you and the prosecutor an opportunity to provide input on this issue prior to its determination. Do not pass up this opportunity!"))),
+        tags$p("The law also requires the judge to consider whether you have had any educational achievements or graduated from any programs. It is critically important you tell the judge if you have done so!"),
+        tags$p("In the meantime, you are entitled to apply for early termination or to have your conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
       )
     
     if(!is.null(eligibility_date_val)){
