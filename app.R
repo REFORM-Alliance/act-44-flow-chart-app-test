@@ -106,6 +106,33 @@ decision_tree <- list(
     question_id = "prc_flow_q1",
     next_question = list(
       "Yes" = "prc_result_1",
+      "No" = "prc_flow_split_sentence"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you whether you were sentenced to jail or prison in addition to your probation sentence. This is important because it helps determine when you might be eligible for early termination.")),
+        tags$p("Were you sentenced to jail or prison in addition to your probation sentence? For this question, only sentences to jail or prison count, not time served in jail before your sentence.")
+      ),
+    question_id = "prc_flow_split_sentence",
+    choices = c("Yes", "No"),
+    next_question = list(
+      "Yes" = "prc_flow_probation_start_date",
+      "No" = "prc_flow_q2"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you when you started serving your probation sentence, after you were released from jail or prison. This is important because it helps determine when you might be eligible for early termination.")),
+        tags$p("On what date did you start serving your probation sentence?")
+      ),
+    choices = c("Yes", "No"),
+    date_question = "Yes",
+    question_id = "prc_flow_probation_start_date",
+    next_question = list(
+      "Yes" = "prc_flow_q2",
       "No" = "prc_flow_q2"
     )
   ),
@@ -184,9 +211,9 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a mandatory conference as part of Act 44. Do you know how long the sentence was? If not, you can look it up ",
+        tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a mandatory conference as part of Act 44. Do you know how long your probation sentence was? If not, you can look it up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>"))),
-        tags$p("Please enter the sentence length here. If you are serving multiple probation sentences consecutively, please add the sentences together.")
+        tags$p("Please enter the probation sentence length here. If you are serving multiple probation sentences consecutively, please add the sentences together. If you served probation after serving time in jail or prison, do not include any jail or prison time here.")
       ),
     drop_down = TRUE,
     drop_down_options = c("Month", "Year"),
@@ -521,12 +548,29 @@ ui <- fluidPage(
         color: white;
       }
 
-      #violation-buttons .btn-success{
+      #violation-buttons .btn-success {
         background-color: #28a745;
         color: white;
+        min-width: 250px;
+        height: 60px;
+        padding: 0 20px;     /* Horizontal padding only */
+        font-size: 18px;
+        line-height: 60px;
+        text-align: center;
+      }
+      
+      #start_button {
+        font-size: 24px; /* Increase font size */
+        padding: 15px 30px; /* Increase padding */
+        min-width: 280px; /* Adjust width as needed */
+        height: 70px;    /* Adjust height as needed */
+        display: flex;        /* Enable flexbox */
+        justify-content: center; /* Center horizontally */
+        align-items: center;    /* Center vertically */
       }
       "
     )),
+    
     tags$script(HTML("
     $(document).on('click', 'a.external-link', function(e) {
       e.preventDefault();
@@ -573,6 +617,7 @@ ui <- fluidPage(
 server <- function(input, output, session){
   history <- reactiveVal(c(1))  
   sentencing_date <- reactiveVal(NULL)
+  probation_start_date <- reactiveVal(NULL)
   sentencing_length_month <- reactiveVal(NULL)
   sentencing_length_year <- reactiveVal(NULL)
   selected_answer <- reactiveVal(NULL)
@@ -634,7 +679,12 @@ server <- function(input, output, session){
     req(sentencing_date(), felony_or_misdemeanor(), sentencing_length_year(),
         sentencing_length_month(), education_credits_answer())
     
-    base_date <- as.Date(sentencing_date())
+    sentence_date <- as.Date(sentencing_date())
+    if(!is.null(probation_start_date())){
+      base_date <- as.Date(probation_start_date())
+    }else{
+      base_date <- as.Date(sentencing_date())
+    }
     felony_val <- felony_or_misdemeanor()
     sentencing_length_year_val <- as.numeric(sentencing_length_year())
     sentencing_length_month_val <- as.numeric(sentencing_length_month())
@@ -642,7 +692,7 @@ server <- function(input, output, session){
     
     misdemeanor_potential_date <- base_date + years(2)
     felony_potential_date <- base_date + years(4)
-    one_year_after_sentence_date <- base_date + years(1)
+    one_year_after_sentence_date <- sentence_date + years(1)
     sentencing_length_val <- as.numeric(sentencing_length_month_val + (12 * sentencing_length_year_val))
     
     multiple_misdemeanors_val <- multiple_misdemeanors()
@@ -1027,6 +1077,10 @@ server <- function(input, output, session){
         sentencing_date(as.Date(input$answer))
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
         answer_selected(TRUE)
+      }else if(current_question$question_id == "prc_flow_probation_start_date"){
+        probation_start_date(as.Date(input$answer))
+        answer_selected(TRUE)
+        selected_answer("Yes")
       }
     }else if(length(current_question$question_list) == 0 & length(current_question$date_question) == 0 & length(current_question$drop_down) > 0){
       answer_ids <- 
@@ -1267,6 +1321,7 @@ server <- function(input, output, session){
   observeEvent(input$start_over_button, {
     history(c(1)) # Reset history to the intro page index
     sentencing_date(NULL)
+    probation_start_date(NULL)
     sentencing_length_month(NULL)
     sentencing_length_year(NULL)
     selected_answer(NULL)
