@@ -515,6 +515,7 @@ decision_tree <- list(
 
 ####Create App####
 ui <- fluidPage(
+  title = "Act 44 Early Termination Tool",
   useShinyjs(),
   theme = shinytheme("flatly"),  
   tags$head(
@@ -604,8 +605,9 @@ ui <- fluidPage(
       img(src = "reform-logo-charcoal.png", class = "logo")
   ),
   
-  titlePanel(div(strong("Act 44 Early Termination Tool"),
-                 style = {'margin-top: 60px; margin-bottom: 40px'})),
+  div(strong("Act 44 Early Termination Tool"),
+      style = "font-size: 40px; margin-top: 60px; margin-bottom: 40px; text-align: center;"
+  ),
   uiOutput("quiz_ui"),
   div(class = "btn-container",
       uiOutput("button_ui")
