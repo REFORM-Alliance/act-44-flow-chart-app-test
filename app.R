@@ -1111,7 +1111,7 @@ server <- function(input, output, session){
         sentencing_date(as.Date(input$answer))
         ifelse(as.Date(input$answer) >= as.Date("2024-06-11"), selected_answer("Yes"), selected_answer("No"))
         answer_selected(TRUE)
-      }else if(current_question$question_id == "prc_flow_probation_start_date"){
+      }else if(current_question$question_id %in% c("prc_flow_probation_start_date", "section_7_probation_start_date")){
         probation_start_date(as.Date(input$answer))
         answer_selected(TRUE)
         selected_answer("Yes")
