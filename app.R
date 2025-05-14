@@ -49,17 +49,18 @@ decision_tree <- list(
       ),
     content_below_buttons = 
       tags$div(
-        tags$p("This tool is specifically designed to be used by people on their probation or others who do not professionally work in this system. For those who work in this field, we have created other tools to help navigate every step in the Act 44 process regarding early termination and modification of probation conditions, and recommend using the flowchart below."),
-        tags$a(
-          href = "act-44-early-termination-flow-chart.png",
-          target = "_blank",
-          tags$img(
-            src = "act-44-early-termination-flow-chart.png",
-            style = "width: 100%; max-width: 1200px; display: block; margin: 20px auto;"
-          )
-        ),
-        tags$p(HTML(paste0("The tool and flowchart are designed to help navigate Act 44, but they are no substitute for legal advice and are designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
-                           "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank' class='external-link'>here</a>.")))
+        tags$p(HTML(paste0("This tool is specifically designed to be used by people on probation or others who do not professionally work in this system. For those who work in this field, we have created other tools to help navigate every step in the Act 44 process regarding early termination and modification of probation conditions, those tools are available ",
+                           "<a href='https://reformalliance.com/pennsylvania-act-44/' target='_blank' class='external-link'>here</a>."))),
+        # tags$a(
+        #   href = "act-44-early-termination-flow-chart.png",
+        #   target = "_blank",
+        #   tags$img(
+        #     src = "act-44-early-termination-flow-chart.png",
+        #     style = "width: 100%; max-width: 1200px; display: block; margin: 20px auto;"
+        #   )
+        # ),
+        # tags$p(HTML(paste0("The tool and flowchart are designed to help navigate Act 44, but they are no substitute for legal advice and are designed for informational purposes only. Please consult a lawyer with any legal questions about your rights under Act 44. You can find the full text of the law ",
+        #                    "<a href='https://www.palegis.us/statutes/unconsolidated/law-information?sessYr=2023&sessInd=0&actNum=44' target='_blank' class='external-link'>here</a>.")))
       ),
     next_question = "defendant_sentencing_date",
     question_id = "intro_page"
@@ -68,9 +69,8 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("First we need to ask when you were sentenced. We ask this question first because Act 44 provides very different options for you depending on when you were sentenced.")),
-        tags$p(HTML(paste0("Do you know when you were sentenced? If not, you can look it up ", 
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
-        tags$p("What date were you sentenced?")
+        tags$p(HTML(paste0("What date were you sentenced? If you do not know, you can look it up ", 
+                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.")))
       ),
     choices = c("Yes", "No"),
     date_question = "Yes",
@@ -83,7 +83,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("Next we need to ask you some questions about the charge or charges for which you were sentenced to probation. This is important because people sentenced for certain types of crimes are eligible for different kinds of legal options than others.")),
+        tags$p(strong("Next we need to ask you some questions about the charge or charges for which you were sentenced to probation. This is important because people sentenced for certain types of crimes are eligible for different kinds of legal options.")),
         tags$p(HTML(paste0("Do you know the crimes for which you were convicted? If not, you can look them up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>."))),
         tags$p("Were you sentenced to probation for one of the following types of crimes?"),
@@ -148,9 +148,9 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. This is important because it helps determine when you might be eligible for early termination. Do you know if any of the charges for which you were sentenced to probation was a felony? If not, you can look that up ",
-                           "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>"))),
-        tags$p("Were any of the charges for which you were sentenced to probation a felony?")
+        tags$p(HTML(paste0("<strong>", "Next we need to ask you whether any of the charges that landed you on probation were felonies. This is important because it helps determine when you might be eligible for early termination.", "</strong>"))),
+        tags$p(HTML(paste("Were any of the charges for which you were sentenced to probation a felony? If not, you can look that up ",
+                          "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.")))
       ),
     choices = c("Yes", "No"),
     question_id = "prc_flow_q2",
@@ -211,7 +211,7 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a mandatory conference as part of Act 44. Do you know how long your probation sentence was? If not, you can look it up ",
+        tags$p(HTML(paste0("<strong>", "Next we need to ask about the length of the probation sentence you have. We need this information to figure out when you are eligible for a probation review conference as part of Act 44. Do you know how long your probation sentence was? If not, you can look it up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.", "</strong>"))),
         tags$p("Please enter the probation sentence length here. If you are serving multiple probation sentences consecutively, please add the sentences together. If you served probation after serving time in jail or prison, do not include any jail or prison time here.")
       ),
@@ -232,7 +232,7 @@ decision_tree <- list(
           tags$li("Earn a master's or other graduate degree from an accredited university, college, or seminary college"),
           tags$li("Obtain a vocational or occupational license, certificate, registration, or permit that was approved by your probation officer"),
           tags$li("Complete a certified vocational, certified technical, or certified career education or training program that was approved by your probation officer"),
-          tags$li("Finish a program or condition designed to improve your life that was ordered by the court at sentencing and approved by your probation officer?")
+          tags$li("Finish a program or condition designed to improve your life that was ordered by the court at sentencing and approved by your probation officer")
         )
       ),
     choices = c("Yes", "No"),
@@ -262,7 +262,7 @@ decision_tree <- list(
            tags$p(HTML(paste0("After receiving the Probation Status Report, you and the prosecutor have 30 days to object to the findings and recommendations of your probation office. This is ", 
                               "<b>", "extremely important ", "</b>", "because if neither you nor your prosecutor object, these recommendations ", 
                               "<b>", "must", "</b>", " be enforced. This means that if your probation office recommends early termination and your prosecutor does not object, the court must terminate your probation! But it also means that if you do not agree with your probation office’s recommendations, you should strongly consider objecting to this report, and should contact your lawyer about your options."))),
-           tags$p("If you or your prosecutor object to this report, the next step is a mandatory court procedure called a Probation Review Conference. What happens at a Probation Review Conference is extremely important because it may help you decide whether to object to this report or not. In some cases, a court will be required to grant you early termination at a Probation Review Conference! In other cases, a court will not be allowed to do so. Knowing how these conferences work will help you make the right decision about objecting to the Probation Status Report or not."),
+           tags$p("If you or your prosecutor object to this report, the next step is a mandatory court procedure called a Probation Review Conference. What happens at a Probation Review Conference is extremely important because it may help you decide whether to object to this report or not. In some cases, a court will be required to grant you early termination at a Probation Review Conference. In other cases, a court will not be allowed to do so. Knowing how these conferences work will help you make the right decision about objecting to the Probation Status Report or not."),
            tags$p("Click NEXT to find out what happens at a Probation Review Conference.")
          ),
        question_id = "prc_flow_q8", 
@@ -280,7 +280,7 @@ decision_tree <- list(
     result = 
       tags$div(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
-        tags$p("Due to your conviction, a judge cannot grant you early termination at your Probation Review Conference. However, you are always eligible to apply for early termination under under 42 P.A.C.S. § 9771. A judge has discretion to grant such an application at any time regardless of any convictions or other issues."), 
+        tags$p("Due to your conviction, a judge cannot grant you early termination at your Probation Review Conference. However, you are always eligible to apply for early termination under 42 P.A.C.S. § 9771. A judge has discretion to grant such an application at any time regardless of any convictions or other issues."), 
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” You are eligible for another probation review conference within one year of the Conference, where the judge can again consider changing the conditions of your probation but cannot terminate probation early.")
       ),
     question_id = "prc_flow_q9_result"
@@ -307,9 +307,9 @@ decision_tree <- list(
                            "<b>", "at this time", "</b>", 
                            ". However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
         tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ",
-                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>.", 
+                           "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>. ", 
                            "A judge has discretion to grant such an application at any time regardless of any other issues."))),
-        tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the date of the threat to public safety the judge found. Remember, you are eligible for another Probation Review Conference within 6 months of the date of this threat, and at that time can again consider changing the conditions of your probation or terminating probation early.")
+        tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the date of the threat to public safety the judge found. Remember, you are eligible for another Probation Review Conference within 6 months of the date of this threat, at which time the court can again consider changing the conditions of your probation or terminating probation early.")
       ),
     question_id = "prc_flow_q10_result"
   ),
@@ -317,14 +317,14 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("Next, a judge will look at another type of alleged bad act you may have committed while on probation. Again, this is important because if the judge finds you have committed one of these acts, they are not allowed to grant you early termination.")),
-        tags$p("At this point, the judge will look at technical violations that occurred in the past 6 months. These acts must have occurred in the 6 months before the Conference, anything older than 6 months does not count.  The judge will determine if there is a preponderance of the evidence that you committed a violation of the terms of your probation in a number of different categories listed below.  A “preponderance of the evidence” means that the evidence makes it more likely than not that you committed one of these acts. The categories are as follows:"),
+        tags$p("At this point, the judge will look at technical violations that occurred in the past 6 months. These acts must have occurred in the 6 months before the Conference, anything older than 6 months does not count. The judge will determine if there is a preponderance of the evidence that you committed a violation of the terms of your probation in a number of different categories listed below. A “preponderance of the evidence” means that the evidence makes it more likely than not that you committed one of these acts. The categories are as follows:"),
         tags$ul(
           tags$li('"Sexual in nature"'), 
           tags$li('"Assaultive behavior" or "credible threats to cause bodily injury to another"'),
           tags$li("Possession or control of firearm or dangerous weapon"),
           tags$li("Manufacture, sale, delivery, or possession with intent to sell drugs"),
           tags$li("Absconded"),
-          tags$li("Unexcused and intentional failure to programming or conditions 3 or more separate occasions")
+          tags$li("Unexcused and intentional failure to adhere to programming or conditions on 3 or more separate occasions")
         ),
         tags$p("The options available at a Probation Review Conference change depending on whether a judge finds that you committed one of these technical violations. Click below to see what happens next.")
       ),
@@ -340,7 +340,7 @@ decision_tree <- list(
       tags$div(
         tags$p("At your Probation Review Conference, a court will consider whether to change the conditions of your probation, and can reduce or increase the severity of those conditions. The judge is permitted to consider any information you provide, so if you are seeking to have your conditions changed it is important that you give the judge all the information you can to support your application."),
         tags$p(HTML(paste0("Due to the judge’s findings of a technical violation in the past 6 months, a judge cannot grant you early termination at your Probation Review Conference at this time. However, you are eligible for another Probation Review Conference 6 months after the date on which this threat to public safety occurred. This could be just a few days or weeks from the date of your Conference, depending on exactly when this threat occurred."))),
-        tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under under ", 
+        tags$p(HTML(paste0("In the meantime, you are always eligible to apply for early termination under ", 
                            "<a href='https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=42&div=0&chapter=97&section=71&subsctn=0' target='_blank' class='external-link'>42 P.A.C.S. § 9771</a>", 
                            ". A judge has discretion to grant such an application at any time regardless of any other issues."))),
         tags$p("After your conference, the court must provide you with “written notice of the court's order detailing the court's findings.” This should contain information about the technical violation or violations the judge found, so you are informed of the judge’s decision-making.")
@@ -350,11 +350,11 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("Next, a judge will look at other behavior during the your time on probation. For this step, the judge will look at your behavior the entire time you were on probation, not just the past 6 months.")),
+        tags$p(strong("Next, a judge will look at other behavior during your time on probation. For this step, the judge will look at your behavior the entire time you were on probation, not just the past 6 months.")),
         tags$p("For this step, the judge will look at your behavior in two categories, for the entire time you have been on probation:"),
         tags$ol(
           type = "1",
-          tags$li("Clear and convincing evidence that you “created an identifiable threat to public safety”"),
+          tags$li("Clear and convincing evidence that you “created an identifiable threat to public safety.”"),
           tags$li("A preponderance of the evidence that you have not “successfully completed all treatment or other programs required as a condition of probation,” and also that terminating probation would prevent you from continuing in the programming that the court finds is necessary for your rehabilitation, or that it would create a “substantial likelihood” that you would stop the treatment or program.")
         ),
         tags$p("As a reminder, the difference between “clear and convincing evidence” and a “preponderance of the evidence” is significant, and you should consult a lawyer with any questions about these or other legal issues."),
@@ -371,7 +371,7 @@ decision_tree <- list(
   list(
     result = 
       tags$div(
-        tags$p("At your Probation Review Conference, a court is not required to grant you early termination. However, the judge can still grant early termination in its discretion! The judge is permitted to consider any information you provide, so if you are seeking early termination or to have your conditions changed it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
+        tags$p("At your Probation Review Conference, a court is not required to grant you early termination. However, the judge can still grant early termination in their discretion! The judge is permitted to consider any information you provide, so if you are seeking early termination or to have your conditions changed it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
         tags$p("Also please be aware that even if the court does not grant you early termination, they can also change the conditions of your probation, and can reduce or increase the severity of those conditions. Again, it is important to present the judge with whatever information you can to best make your arguments!"),
         tags$p('If the judge does not grant you early termination at this time, you are eligible for another Probation Review Conference 1 year after this Conference. Also, the court must provide you with “written notice of the court\'s order detailing the court\'s findings.”')
       ),
@@ -381,7 +381,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("We have only one more question to answer before determining whether the judge will be required to grant you early termination.")),
-        tags$p("That question is whether you have paid all restitution you owe, if any. Have you paid all of your restitution?")
+        tags$p("Have you paid all of your restitution you owe, if restitution was part of your conviction?")
       ),
     choices = c("Yes", "No"),
     question_id = "prc_flow_q13",
@@ -402,7 +402,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("You are still eligible for early termination!")),
-        tags$p("However, the judge is not forced to grant you early termination because you have not paid your restitution. The judge has the power to grant or deny early termination, or to modify the conditions of your probation. However, if you have have paid at least 50% of your restitution, or if you have made a “good faith” effort to pay the restitution you owe, then it impacts what a judge is required to do."),
+        tags$p("The judge has the power to grant or deny early termination, or to modify the conditions of your probation. However, because you have not paid all of your restitution, the judge is not required to grant you early termination. If you have paid at least 50% of your restitution, or if you have made a “good faith” effort to pay the restitution you owe, then it impacts what a judge is required to do."),
         tags$p("Have you paid at least 50% of your restitution, or made a “good faith” effort to pay?")
       ),
     choices = c("Yes", "No"),
@@ -415,7 +415,7 @@ decision_tree <- list(
   list(
     result = 
       tags$div(
-        tags$p("You are still eligible for early termination! However, the judge is not forced to grant you early termination because you have not paid your restitution. The judge is permitted to consider any information you provide, so it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
+        tags$p("You are still eligible for early termination! However, because you have not paid all of your restitution, the judge is not required to grant you early termination. The judge is permitted to consider any information you provide, so it is important that you give the judge all the information you can to support your application. Please consult with a lawyer to discuss your options for best advocating for early termination."),
         tags$p("Because you have paid at least 50% of your restitution, or made a “good faith” effort to pay it, if the judge does not grant you early termination they must place you on administrative probation. This means that the only terms of your probation must be as follows:"),
         tags$ol(
           type = "1",
@@ -436,7 +436,7 @@ decision_tree <- list(
       ),
     question_list = list("q1" = "A crime related to sex offender registration",
                          "q2" = paste0("A ", "<a href='https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=42&div=0&chpt=97&sctn=14&subsctn=0' target='_blank' class='external-link'>crime of violence</a>"),
-                         "q3" = "Assault or stalking against a family or household member? This only counts if they were convicted under under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking)"),
+                         "q3" = "Assault or stalking against a family or household member? This only counts if they were convicted under 18 Pa.C.S. § 2701 (relating to simple assault) or 2709.1 (relating to stalking)"),
     choices = c("Yes", "No"),
     question_id = "section_7_q1",
     next_question = 
@@ -448,8 +448,8 @@ decision_tree <- list(
   list(
     question =
       tags$div(
-        tags$p("Now we need to ask you about your behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you had any arrests, convictions, or violations while on probation or while in custody on the case that led them to probation."),
-        tags$p("First of all, were you convicted of any felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
+        tags$p("Now we need to ask you about your behavior while on probation. Eligibility for certain kinds of benefits under Act 44 depends on whether you had any arrests, convictions, or violations while on probation or while in custody."),
+        tags$p("Were you convicted of a felony or first or second degree misdemeanor during this time? Please note that only a conviction counts here, not an arrest.")
       ),
     choices = c("Yes", "No"), 
     question_id = "section_7_q1_1",
@@ -462,8 +462,8 @@ decision_tree <- list(
   list(
     question = 
       tags$div(
-        tags$p(strong("Now we need to ask you about the severity of the charge you were convicted of. This is important because it will determine when you are eligible for benefits under Act 44.")),
-        tags$p(HTML(paste0("Were any of these charges a felony? If you don't know the answer to this, you can look up it up ",
+        tags$p(strong("Now we need to ask you about the severity of the charge that resulted in your being on probation. This is important because whether you were convicted of a felony or misdemeanor determines when you are eligible for benefits under Act 44.")),
+        tags$p(HTML(paste0("Were any of the charges for which you were sentenced to probation a felony? If you don't know the answer to this, you can look up it up ",
                            "<a href='https://ujsportal.pacourts.us/casesearch' target='_blank' class='external-link'>here</a>.")))
       ),
     choices = c("Yes", "No"),
@@ -775,7 +775,7 @@ server <- function(input, output, session){
         "Now we need to ask you about your behavior in the following dates: ",
         "from ", "<strong>", format_pretty_date(eligibility_date_val - months(6)), "</strong>",
         " to ", "<strong>", format_pretty_date(eligibility_date_val), "</strong>",
-        ". Act 44 requires a judge to look at any alleged bad acts you have committed during this time. This is important because if the judge finds you have committed one of these acts, they are not required consider you for early termination. A judge will look at your record and determine whether you have committed any technical violations during this time period."
+        ". Act 44 requires a judge to look at any alleged bad acts you have committed during this time. This is important because if the judge finds you have committed one of these acts, they are not required to consider you for early termination. A judge will look at your record and determine whether you have committed any technical violations during this time period."
       ))),
       tags$p("They will decide whether you have committed a violation in the following categories:"),
       tags$ol(type = "I",
@@ -784,7 +784,7 @@ server <- function(input, output, session){
               tags$li("A violation that involved possession or control of a firearm or dangerous weapon"),
               tags$li("A violation involved the manufacture, sale, delivery or possession with the intent to manufacture, sell or deliver, a controlled substance or other drug regulated under the act of April 14, 1972 (P.L.233, No.64), known as The Controlled Substance, Drug, Device and Cosmetic Act"),
               tags$li("A violation in which the probationer absconded from probation"),
-              tags$li("A violation which involved an intentional and unexcused failure to adhere to recommended programming or conditions on three or more separate occasions. Multiple technical violations stemming from the same episode of events do not constitute separate technical violations."),
+              tags$li("A violation that involved an intentional and unexcused failure to adhere to recommended programming or conditions on three or more separate occasions. Multiple technical violations stemming from the same episode of events do not constitute separate technical violations."),
               tags$li("A violation that involved an identifiable threat to public safety")
       ),
       tags$p("If the judge finds that you have committed one of these violations the next steps will be as follows:")
@@ -821,7 +821,7 @@ server <- function(input, output, session){
     
     question_content <-
       tags$div(
-        tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review your case to determine whether to have your probation terminated or your conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for you to give the court any information that would help it make this decision. In fact, the law requires the court to give both you and the prosecutor an opportunity to provide input on this issue prior to its determination. Do not pass up this opportunity!"))),
+        tags$p(HTML(paste0("On ", "<strong>", eligibility_date_val_clean, "</strong>", ", a court will be required to review your case to determine whether to have your probation terminated or your conditions modified. That judge will have almost unlimited discretion in making this decision, which is why it is important for you to give the court any information that could help them make this decision. In fact, the law requires the court to give both you and the prosecutor an opportunity to provide input on this issue prior to its determination. Do not pass up this opportunity!"))),
         tags$p("The law also requires the judge to consider whether you have had any educational achievements or graduated from any programs. It is critically important you tell the judge if you have done so!"),
         tags$p("In the meantime, you are entitled to apply for early termination or to have your conditions modified under 42 P.A.C.S. § 9771 at any time. A judge has discretion to grant or deny this application at any time, for any person, even if that person is not eligible for a mandatory review under Act 44.")
       )
@@ -853,8 +853,8 @@ server <- function(input, output, session){
                            "<b>", "critically important", "</b>", " for you to review carefully."))),
         tags$p("This document must contain the following information"),
         tags$ul(
-          tags$li("The date they believe you are eligible for a conference on early termination or changing probation conditions"),
-          tags$li("Any technical violations they think you have committed within the past 6 months"),
+          tags$li("The date your PO believes you are eligible for a conference on early termination or changing probation conditions"),
+          tags$li("Any technical violations your PO thinks you have committed within the past 6 months"),
           tags$li("Any criminal convictions you have had while on probation or in custody on uderlying case"),
           tags$li("Any programs you have completed while on probation"),
           tags$li("Your restitution payments, if you have any"),
@@ -863,7 +863,7 @@ server <- function(input, output, session){
         tags$p("Most importantly, your probation office must make a recommendation that your probation be terminated, your conditions modified, or that you continue under your current conditions. This is critically important for reasons explained on the next screen."),
         tags$p(HTML(paste0("If you did not receive this report by ", 
                            "<strong>", format_pretty_date(as.Date(eligibility_date_val) - days(30)), "</strong>", 
-                           ", you should contact your attorney as soon as possible. It is critically important to review this document, for reasons we will explain next.")))
+                           ", you should contact your attorney as soon as possible. It is very important to review this document, for reasons we will explain next.")))
       )
     
     if(!is.null(eligibility_date_val)){
@@ -891,7 +891,7 @@ server <- function(input, output, session){
         tags$p(HTML(paste0("Your Probation Review Conference must be held by ", 
                            "<strong>", format_pretty_date(as.Date(eligibility_date_val) + days(60)), "</strong>",
                            ". If you do not receive your hearing by this date, you have the right to petition the court to hold this hearing within 5 days."))),
-        tags$p("During the Conference, the judge will review your behavior and record while on probation. In some cases, good behavior may lead to mandatory termination of probation. In other cases, certain types of poor behavior such as a new conviction while on probation makes early termination impossible. This tool is designed to help you understand exactly what will happen Probation Review Conference, and exactly what a judge is required to consider and decide. The tool will pose a series of questions that a judge will need to answer and then tell you the outcome of your case based on what the judge decides. Of course, this tool cannot predict exactly what a judge will decide, but it will tell you what the outcome must be after a judge makes their decision."),
+        tags$p("During the Conference, the judge will review your behavior and record while on probation. In some cases, good behavior may lead to mandatory termination of probation. In other cases, certain types of poor behavior such as a new conviction while on probation makes early termination impossible. This tool is designed to help you understand exactly what will happen at your Probation Review Conference, and exactly what a judge is required to consider and decide. This tool will pose a series of questions that a judge will need to answer during a Probation Review Conference, and then this tool will tell you the potential outcome of your case based on the information provided. Of course, this tool cannot predict exactly what a judge will decide, but it will tell you what the outcome must be if certain factors are met or not met."),
         tags$p("First, a judge will look at your criminal record while you were on probation or while you were in custody for that case. Were you convicted of a felony or a first or second degree misdemeanor during this time?")
       )
     
