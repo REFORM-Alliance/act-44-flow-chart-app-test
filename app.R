@@ -469,6 +469,33 @@ decision_tree <- list(
     choices = c("Yes", "No"),
     question_id = "section_7_q2",
     next_question = list(
+      "Yes" = "section_7_split_sentence",
+      "No" = "section_7_split_sentence"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you whether you were sentenced to jail or prison in addition to your probation sentence. This is important because it helps determine when you might be eligible for early termination.")),
+        tags$p("Were you sentenced to jail or prison in addition to your probation sentence? For this question, only sentences to jail or prison count, not time served in jail before your sentence.")
+      ),
+    question_id = "section_7_split_sentence",
+    choices = c("Yes", "No"),
+    next_question = list(
+      "Yes" = "section_7_probation_start_date",
+      "No" = "section_7_q3"
+    )
+  ),
+  list(
+    question = 
+      tags$div(
+        tags$p(strong("Next we need to ask you when you started serving your probation sentence, after you were released from jail or prison. This is important because it helps determine when you might be eligible for early termination.")),
+        tags$p("On what date did you start serving your probation sentence?")
+      ),
+    choices = c("Yes", "No"),
+    date_question = "Yes",
+    question_id = "section_7_probation_start_date",
+    next_question = list(
       "Yes" = "section_7_q3",
       "No" = "section_7_q3"
     )
@@ -663,6 +690,11 @@ server <- function(input, output, session){
   ##Reactive function to calculate eligibility_date
   calculate_eligibility_date_section_7 <- reactive({
     if(!is.null(sentencing_date()) & !is.null(felony_or_misdemeanor())){
+      if(!is.null(probation_start_date())){
+        base_date <- as.Date(probation_start_date())
+      }else{
+        base_date <- as.Date(sentencing_date())
+      }
       base_date <- as.Date(sentencing_date())
       felony_val <- felony_or_misdemeanor()
       if(felony_val == "Felony"){
