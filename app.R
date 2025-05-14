@@ -1020,7 +1020,7 @@ server <- function(input, output, session){
           dateInput(
             inputId = "answer",
             label = "Select a date:",
-            value = Sys.Date(),      
+            value = NULL,      
             min = "1980-01-01",      
             max = "2030-12-31",      
             format = "yyyy-mm-dd",   
@@ -1348,6 +1348,7 @@ server <- function(input, output, session){
   observeEvent(input$back_button, {
     if(length(history()) > 1){
       history(history()[1:(length(history()) - 1)])
+      answer_selected(FALSE)
     }
   })
   
