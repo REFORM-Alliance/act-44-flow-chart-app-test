@@ -695,7 +695,6 @@ server <- function(input, output, session){
       }else{
         base_date <- as.Date(sentencing_date())
       }
-      base_date <- as.Date(sentencing_date())
       felony_val <- felony_or_misdemeanor()
       if(felony_val == "Felony"){
         potential_date <- base_date + years(4)
