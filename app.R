@@ -381,7 +381,7 @@ decision_tree <- list(
     question = 
       tags$div(
         tags$p(strong("We have only one more question to answer before determining whether the judge will be required to grant you early termination.")),
-        tags$p("Have you paid all of your restitution you owe, if restitution was part of your conviction?")
+        tags$p("Have you paid all of the restitution you owe, if restitution was part of your sentence?")
       ),
     choices = c("Yes", "No"),
     question_id = "prc_flow_q13",
@@ -1346,9 +1346,12 @@ server <- function(input, output, session){
   })
   
   observeEvent(input$back_button, {
+    # answer_selected(FALSE)
+    # selected_answer(NULL)
     if(length(history()) > 1){
       history(history()[1:(length(history()) - 1)])
       answer_selected(FALSE)
+      selected_answer(NULL)
     }
   })
   
