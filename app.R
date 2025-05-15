@@ -1096,6 +1096,7 @@ server <- function(input, output, session){
       buttons <- append(buttons, list(actionButton("finish_button", "Finish", class = "btn btn-danger")))
     }else if(length(current_question$intro) == 0 & current_question$question_id != "finished_page"){
       buttons <- append(buttons, list(actionButton("next_button", "Next", class = "btn btn-primary")))
+      # buttons <- append(buttons, list(actionButton("start_over_button", "Start Over", class = "btn btn-success")))
     }
     
     do.call(fluidRow, buttons)
@@ -1139,6 +1140,10 @@ server <- function(input, output, session){
         ifelse(input$answer == "Yes", probation_after_parole_answer("Yes"), probation_after_parole_answer("No"))
       }else if(current_question$question_id == "prc_flow_q3_1_final_year_parole"){
         ifelse(input$answer == "Yes", final_year_of_parole_answer("Yes"), final_year_of_parole_answer("No"))
+      }else if(current_question$question_id %in% c("prc_flow_split_sentence", "section_7_split_sentence")){
+        if(input$answer == "No"){
+          probation_start_date(NULL)
+        }
       }
       ifelse(is.null(input$answer) == FALSE, answer_selected(TRUE), answer_selected(FALSE))
       selected_answer(input$answer)
@@ -1346,14 +1351,134 @@ server <- function(input, output, session){
   })
   
   observeEvent(input$back_button, {
-    # answer_selected(FALSE)
-    # selected_answer(NULL)
+    answer_selected(FALSE)
+    selected_answer(NULL)
     if(length(history()) > 1){
       history(history()[1:(length(history()) - 1)])
       answer_selected(FALSE)
       selected_answer(NULL)
     }
   })
+  
+  # observeEvent(input$back_button, {
+  #   current_index <- tail(history(), 1)
+  #   prev_index <- history()[length(history()) - 1]
+  #   prev_question_id <- decision_tree[[prev_index]]$question_id
+  #   
+  #   # Reset common reactives
+  #   answer_selected(FALSE)
+  #   selected_answer(NULL)
+  #   
+  #   # Logic to reset specific reactive values based on the previous question being navigated to
+  #   if (prev_question_id == "defendant_sentencing_date") {
+  #     probation_start_date(NULL)
+  #     felony_or_misdemeanor(NULL)
+  #     sentencing_length_month(NULL)
+  #     sentencing_length_year(NULL)
+  #     multiple_misdemeanors("N/A")
+  #     education_credits_answer(NULL)
+  #     education_credits_more_than_2_answer("N/A")
+  #     probation_after_parole_answer("N/A")
+  #     final_year_of_parole_answer("N/A")
+  #     eligibility_date_section_7(NULL)
+  #     eligibility_date_prc(NULL)
+  #     violation_answer(NULL)
+  #     threat_to_safety_answer(NULL)
+  #     same_conduct_answer("N/A")
+  #     technical_violation_found_answer(NULL)
+  #     answer_years_selected(FALSE)
+  #     answer_months_selected(FALSE)
+  #   } else if (prev_question_id == "prc_flow_q1") {
+  #     # If going back from prc_flow_q1, reset everything after it in that branch
+  #     multiple_misdemeanors("N/A")
+  #     education_credits_answer(NULL)
+  #     education_credits_more_than_2_answer("N/A")
+  #     probation_after_parole_answer("N/A")
+  #     final_year_of_parole_answer("N/A")
+  #     eligibility_date_prc(NULL)
+  #     violation_answer(NULL)
+  #     threat_to_safety_answer(NULL)
+  #     same_conduct_answer("N/A")
+  #     technical_violation_found_answer(NULL)
+  #     sentencing_length_month(NULL)
+  #     sentencing_length_year(NULL)
+  #     answer_years_selected(FALSE)
+  #     answer_months_selected(FALSE)
+  #   } else if (prev_question_id == "prc_flow_split_sentence") {
+  #     probation_start_date(NULL) # Reset if they change this split
+  #     # Also reset everything from prc_flow_q2 onwards if returning here
+  #     multiple_misdemeanors("N/A")
+  #     education_credits_answer(NULL)
+  #     education_credits_more_than_2_answer("N/A")
+  #     probation_after_parole_answer("N/A")
+  #     final_year_of_parole_answer("N/A")
+  #     eligibility_date_prc(NULL)
+  #     violation_answer(NULL)
+  #     threat_to_safety_answer(NULL)
+  #     same_conduct_answer("N/A")
+  #     technical_violation_found_answer("N/A")
+  #     sentencing_length_month(NULL)
+  #     sentencing_length_year(NULL)
+  #     answer_years_selected(FALSE)
+  #     answer_months_selected(FALSE)
+  #   } else if (prev_question_id == "prc_flow_probation_start_date") {
+  #     # If coming from probation_start_date, only reset things after prc_flow_q2
+  #     multiple_misdemeanors("N/A")
+  #     education_credits_answer(NULL)
+  #     education_credits_more_than_2_answer("N/A")
+  #     probation_after_parole_answer("N/A")
+  #     final_year_of_parole_answer("N/A")
+  #     eligibility_date_prc(NULL)
+  #     violation_answer(NULL)
+  #     threat_to_safety_answer(NULL)
+  #     same_conduct_answer("N/A")
+  #     technical_violation_found_answer(NULL)
+  #     sentencing_length_month(NULL)
+  #     sentencing_length_year(NULL)
+  #     answer_years_selected(FALSE)
+  #     answer_months_selected(FALSE)
+  #   } else if (prev_question_id == "prc_flow_q2") {
+  #     multiple_misdemeanors("N/A")
+  #     education_credits_answer(NULL)
+  #     education_credits_more_than_2_answer("N/A")
+  #     probation_after_parole_answer("N/A")
+  #     final_year_of_parole_answer("N/A")
+  #     eligibility_date_prc(NULL)
+  #     violation_answer(NULL)
+  #     threat_to_safety_answer(NULL)
+  #     same_conduct_answer("N/A")
+  #     technical_violation_found_answer(NULL)
+  #     sentencing_length_month(NULL)
+  #     sentencing_length_year(NULL)
+  #     answer_years_selected(FALSE)
+  #     answer_months_selected(FALSE)
+  #   } else if (prev_question_id == "section_7_q1") {
+  #     felony_or_misdemeanor(NULL)
+  #     probation_start_date(NULL)
+  #     eligibility_date_section_7(NULL)
+  #     violation_answer(NULL)
+  #   } else if (prev_question_id == "section_7_q1_1") {
+  #     felony_or_misdemeanor(NULL)
+  #     probation_start_date(NULL)
+  #     eligibility_date_section_7(NULL)
+  #     violation_answer(NULL)
+  #   } else if (prev_question_id == "section_7_q2") {
+  #     probation_start_date(NULL)
+  #     eligibility_date_section_7(NULL)
+  #     violation_answer(NULL)
+  #   } else if (prev_question_id == "section_7_split_sentence") {
+  #     probation_start_date(NULL)
+  #     eligibility_date_section_7(NULL)
+  #     violation_answer(NULL)
+  #   } else if (prev_question_id == "section_7_probation_start_date") {
+  #     eligibility_date_section_7(NULL)
+  #     violation_answer(NULL)
+  #   }
+  #   
+  #   if(length(history()) > 1){
+  #     history(history()[1:(length(history()) - 1)])
+  #   }
+  # })
   
   observeEvent(input$start_over_button, {
     history(c(1)) # Reset history to the intro page index
@@ -1383,6 +1508,7 @@ server <- function(input, output, session){
     finished_page_index <- which(map_chr(decision_tree, "question_id") == "finished_page")
     history(c(history(), finished_page_index))
   })
+  
 }
 
 ##Deploy App
