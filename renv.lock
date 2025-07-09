@@ -104,6 +104,16 @@
       ],
       "Hash": "c39f4155b3ceb1a9a2799d700fbd4b6a"
     },
+    "assertthat": {
+      "Package": "assertthat",
+      "Version": "0.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "tools"
+      ],
+      "Hash": "50c838a310445e954bc13f26f26a6ecf"
+    },
     "backports": {
       "Package": "backports",
       "Version": "1.5.0",
@@ -548,6 +558,44 @@
         "methods"
       ],
       "Hash": "5899f1eaa825580172bb56c08266f37c"
+    },
+    "googleAuthR": {
+      "Package": "googleAuthR",
+      "Version": "2.0.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "assertthat",
+        "cli",
+        "digest",
+        "gargle",
+        "httr",
+        "jsonlite",
+        "memoise",
+        "rlang",
+        "utils"
+      ],
+      "Hash": "a70b343ff4f9dfa548c5473525da8404"
+    },
+    "googleLanguageR": {
+      "Package": "googleLanguageR",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "assertthat",
+        "base64enc",
+        "googleAuthR",
+        "jsonlite",
+        "magrittr",
+        "purrr",
+        "stats",
+        "tibble",
+        "utils"
+      ],
+      "Hash": "618aac4f338baff62ad09ebb2838a003"
     },
     "googledrive": {
       "Package": "googledrive",
@@ -1327,6 +1375,25 @@
         "xtable"
       ],
       "Hash": "4b4477baa9a939c5577e5ddb4bf01f28"
+    },
+    "shiny.i18n": {
+      "Package": "shiny.i18n",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "glue",
+        "jsonlite",
+        "methods",
+        "rstudioapi",
+        "shiny",
+        "stringr",
+        "utils",
+        "yaml"
+      ],
+      "Hash": "fb1b47e69750065a4f3c8c4ef24e4891"
     },
     "shinyWidgets": {
       "Package": "shinyWidgets",
