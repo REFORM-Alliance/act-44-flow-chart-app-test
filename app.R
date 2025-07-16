@@ -1350,6 +1350,7 @@ server <- function(input, output, session){
     current_question <- decision_tree[[current_index]]
     answer_years_selected_val = answer_years_selected()
     answer_months_selected_val = answer_months_selected()
+    current_lang_code <- input$selected_language 
     
     if(current_question$question_id == "prc_flow_q4"){
       if(answer_years_selected_val == TRUE & answer_months_selected_val == TRUE){
